@@ -353,6 +353,30 @@ export class PurifierCard extends LitElement {
     `;
   }
 
+  private getSpinSpeedClass(presetMode?: string): string {
+    if (!presetMode) return 'speed-slow';
+
+    const mode = presetMode.toLowerCase();
+
+    // Turbo mode - very fast
+    if (mode === 'turbo') return 'speed-turbo';
+
+    // Sleep and gentle modes - very slow
+    if (mode.includes('sleep') || mode === 'gentle') return 'speed-very-slow';
+
+    // Speed 3 - fast
+    if (mode === 'speed_3') return 'speed-fast';
+
+    // Speed 2 - medium
+    if (mode === 'speed_2') return 'speed-medium';
+
+    // Speed 1 - slow
+    if (mode === 'speed_1') return 'speed-slow';
+
+    // Auto and other modes - slow (default)
+    return 'speed-slow';
+  }
+
   private renderHeader(): Template {
     if (!this.entity) return nothing;
 
@@ -367,13 +391,19 @@ export class PurifierCard extends LitElement {
       this.config.show_child_lock
     ) && (!this.config.collapse_controls_when_off || isOn);
 
+    // Get dynamic spin speed based on preset mode
+    const spinSpeedClass = isOn && (this.config.icon_animation ?? true)
+      ? this.getSpinSpeedClass(attributes.preset_mode)
+      : '';
+
     return html`
       <div class="state-item">
         ${this.config.show_icon
           ? html`
               <div class="icon-state ${classMap({
                 active: isOn,
-                spin: isOn && (this.config.icon_animation ?? true)
+                spin: isOn && (this.config.icon_animation ?? true),
+                [spinSpeedClass]: true
               })}" @click=${() => this.handleToggle()}>
                 <ha-icon icon="mdi:fan"></ha-icon>
               </div>
