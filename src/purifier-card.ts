@@ -102,8 +102,11 @@ export class PurifierCard extends LitElement {
 
   protected shouldUpdate(changedProps: PropertyValues) {
     // If hass changed and we have a device_id but no detected entities, run detection
-    if (changedProps.has('hass') && this.config?.device_id && !this.detectedEntities.fan) {
-      this.detectedEntities = detectPhilipsEntities(this.hass, this.config.device_id);
+    if (changedProps.has('hass') && this.hass && this.config?.device_id && !this.detectedEntities.fan) {
+      console.log('Running entity detection for device:', this.config.device_id);
+      const detected = detectPhilipsEntities(this.hass, this.config.device_id);
+      console.log('Detected entities:', detected);
+      this.detectedEntities = detected;
     }
 
     return hasConfigOrEntityChanged(this, changedProps, false);
@@ -412,6 +415,7 @@ export class PurifierCard extends LitElement {
   protected render() {
     // If no config yet (e.g., during card picker preview), show a simple card
     if (!this.config) {
+      console.log('No config available');
       return html`
         <ha-card class="mushroom-card">
           <div class="card-content unavailable">
@@ -422,7 +426,13 @@ export class PurifierCard extends LitElement {
       `;
     }
 
+    // Log current state for debugging
+    console.log('Render - config:', this.config);
+    console.log('Render - detectedEntities:', this.detectedEntities);
+    console.log('Render - entity:', this.entity);
+
     if (!this.entity) {
+      console.log('No entity found, showing unavailable');
       return this.renderUnavailable();
     }
 
