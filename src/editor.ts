@@ -77,7 +77,9 @@ export class PurifierCardEditor extends LitElement {
     if (!this.hass) return;
 
     const allDevices = await getDevices(this.hass);
+    console.log('All devices:', allDevices.length);
     this.devices = filterPhilipsDevices(allDevices);
+    console.log('Filtered Philips devices:', this.devices.length, this.devices);
     this.requestUpdate();
   }
 
@@ -92,17 +94,20 @@ export class PurifierCardEditor extends LitElement {
           <ha-select
             .label=${localize('editor.device')}
             @selected=${this.deviceChanged}
+            @change=${this.deviceChanged}
             .value=${this.config.device_id}
             @closed=${(e: PointerEvent) => e.stopPropagation()}
             fixedMenuPosition
             naturalMenuWidth
           >
-            ${this.devices.map(
-              (device) =>
-                html`<mwc-list-item .value=${device.id}>
-                  ${device.name_by_user || device.name}
-                </mwc-list-item>`,
-            )}
+            ${this.devices.length === 0
+              ? html`<mwc-list-item value="">Loading devices...</mwc-list-item>`
+              : this.devices.map(
+                  (device) =>
+                    html`<mwc-list-item .value=${device.id}>
+                      ${device.name_by_user || device.name}
+                    </mwc-list-item>`,
+                )}
           </ha-select>
         </div>
 
