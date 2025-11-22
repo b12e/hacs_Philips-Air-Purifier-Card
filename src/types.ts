@@ -45,17 +45,32 @@ export interface PurifierCardConfig {
   type: string;
   device_id?: string;
   entity?: string; // Kept for backward compatibility
+
+  // Display options
   show_name: boolean;
   show_state: boolean;
+  fill_container?: boolean;
+
+  // Preset modes
   show_preset_modes: boolean;
+  collapsible_preset_modes?: boolean; // Show preset modes behind a button
+  visible_preset_modes?: string[]; // Which preset modes to show (empty = all)
+
+  // Sensors
   show_sensors: boolean;
-  show_toolbar: boolean; // Legacy - now controls power button visibility
-  show_power_button?: boolean;
+  sensors_in_separate_card?: boolean; // Show sensors in separate card below
+  visible_sensors?: string[]; // Which sensors to show (pm25, iai, humidity, temperature)
+
+  // Controls
   show_child_lock?: boolean;
-  compact_view: boolean;
-  layout: 'vertical' | 'horizontal';
-  collapsible_controls?: boolean; // Hide controls when device is off
-  fill_container?: boolean; // Fill available space in layout
+
+  // Legacy
+  show_toolbar: boolean; // Deprecated
+  show_power_button?: boolean; // Deprecated
+  compact_view: boolean; // Deprecated
+  layout: 'vertical' | 'horizontal'; // Deprecated
+  collapsible_controls?: boolean; // Deprecated
+
   detected_entities?: DetectedEntities;
 }
 

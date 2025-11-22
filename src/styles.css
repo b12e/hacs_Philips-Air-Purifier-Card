@@ -6,12 +6,9 @@
   --control-height: 42px;
   --control-border-radius: 12px;
   --control-spacing: 8px;
-  --control-button-ratio: 1;
-  --control-icon-size: 20px;
 
   /* Mushroom-inspired RGB color variables */
   --rgb-state-fan: var(--rgb-cyan, 0, 188, 212);
-  --rgb-primary-color: var(--rgb-accent-color, 3, 169, 244);
   --rgb-disabled: 189, 189, 189;
   --rgb-primary-text-color: var(--primary-text-color-rgb, 33, 33, 33);
 
@@ -27,9 +24,15 @@
   --card-background: var(--ha-card-background, var(--card-background-color, white));
   --primary-text: var(--primary-text-color);
   --secondary-text: var(--secondary-text-color);
-  --divider-color: var(--entities-divider-color, rgba(127, 127, 127, 0.2));
 
   display: block;
+}
+
+/* Card container for multiple cards */
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
 }
 
 ha-card {
@@ -44,10 +47,6 @@ ha-card {
 
 ha-card.mushroom-card {
   padding: 0;
-}
-
-ha-card.compact {
-  padding: 8px;
 }
 
 ha-card.fill-container {
@@ -66,20 +65,7 @@ ha-card.fill-container {
 .card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--spacing);
-}
-
-.entity-info {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing);
-  flex: 1;
-  min-width: 0;
-}
-
-.entity-info.clickable {
-  cursor: pointer;
 }
 
 .icon-state {
@@ -93,7 +79,7 @@ ha-card.fill-container {
   background: rgba(var(--rgb-disabled), 0.2);
   color: rgb(var(--rgb-disabled));
   transition: all 280ms ease-in-out;
-  position: relative;
+  cursor: pointer;
 }
 
 .icon-state.active {
@@ -137,52 +123,131 @@ ha-card.fill-container {
   gap: 4px;
 }
 
-/* Preset Modes - Mushroom Button Style */
-.preset-modes {
+/* Modes Container - Mushroom Climate Style */
+.modes-container {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: var(--control-spacing);
-  padding: 0;
 }
 
-.preset-mode-button {
+.mode-button {
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   height: var(--control-height);
-  width: calc(var(--control-height) * var(--control-button-ratio));
-  flex: none;
+  padding: 0 16px;
   border-radius: var(--control-border-radius);
   background: rgba(var(--rgb-primary-text-color), 0.05);
   border: none;
   margin: 0;
-  padding: 0;
   box-sizing: border-box;
   transition: background-color 280ms ease-in-out;
   line-height: 0;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.preset-mode-button:hover:not(.active) {
+.mode-button:hover:not(.active) {
   background: rgba(var(--rgb-primary-text-color), 0.1);
 }
 
-.preset-mode-button.active {
+.mode-button.active {
   background: rgba(var(--rgb-state-fan), 0.2);
 }
 
-.preset-mode-button ha-icon {
-  --mdc-icon-size: var(--control-icon-size);
+.mode-button ha-icon {
+  --mdc-icon-size: 20px;
   color: var(--primary-text);
   pointer-events: none;
 }
 
-.preset-mode-button.active ha-icon {
+.mode-button.active ha-icon {
   color: rgb(var(--rgb-state-fan));
 }
 
-/* Sensors */
+.mode-label {
+  font-size: var(--card-secondary-font-size);
+  font-weight: var(--card-primary-font-weight);
+  color: var(--primary-text);
+  white-space: nowrap;
+}
+
+.mode-button.active .mode-label {
+  color: rgb(var(--rgb-state-fan));
+}
+
+.mode-button.child-lock {
+  padding: 0;
+  width: var(--control-height);
+}
+
+/* Sensor Cards - Horizontal Layout */
+.sensor-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--control-spacing);
+}
+
+.sensor-card {
+  cursor: pointer;
+  transition: transform 180ms ease-in-out;
+}
+
+.sensor-card:hover {
+  transform: translateY(-2px);
+}
+
+.sensor-card-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+  padding: var(--spacing);
+}
+
+.sensor-card .sensor-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(var(--rgb-state-fan), 0.15);
+  color: rgb(var(--rgb-state-fan));
+}
+
+.sensor-card .sensor-icon ha-icon {
+  --mdc-icon-size: 18px;
+}
+
+.sensor-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sensor-label {
+  font-size: var(--card-secondary-font-size);
+  color: var(--secondary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sensor-value {
+  font-size: var(--card-primary-font-size);
+  font-weight: var(--card-primary-font-weight);
+  color: var(--primary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sensors - Inline Style (when not in separate cards) */
 .sensors {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -205,7 +270,7 @@ ha-card.fill-container {
   transform: translateY(-1px);
 }
 
-.sensor-icon {
+.sensor .sensor-icon {
   flex: 0 0 36px;
   width: 36px;
   height: 36px;
@@ -217,7 +282,7 @@ ha-card.fill-container {
   color: rgb(var(--rgb-state-fan));
 }
 
-.sensor-icon ha-icon {
+.sensor .sensor-icon ha-icon {
   --mdc-icon-size: 18px;
 }
 
@@ -227,47 +292,6 @@ ha-card.fill-container {
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.sensor-label {
-  font-size: 12px;
-  color: var(--secondary-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sensor-value {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--primary-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Toolbar */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid var(--divider-color);
-}
-
-.toolbar ha-icon-button {
-  --mdc-icon-button-size: var(--control-height);
-  --mdc-icon-size: 24px;
-  color: var(--secondary-text);
-  transition: color 0.2s ease;
-}
-
-.toolbar ha-icon-button:hover {
-  color: var(--primary-text);
-}
-
-.toolbar ha-icon-button.active {
-  color: var(--primary-color);
 }
 
 /* Unavailable state */
@@ -287,85 +311,8 @@ ha-card.fill-container {
   color: var(--disabled-color);
 }
 
-/* Compact view */
-ha-card.compact .card-content {
-  padding: 8px;
-  gap: 8px;
-}
-
-ha-card.compact .card-header {
-  gap: 8px;
-}
-
-ha-card.compact .icon-state {
-  --icon-size: 36px;
-  width: 36px;
-  height: 36px;
-}
-
-ha-card.compact .name {
-  font-size: 14px;
-}
-
-ha-card.compact .state-text {
-  font-size: 12px;
-}
-
-ha-card.compact .preset-modes {
-  gap: 8px;
-}
-
-ha-card.compact .preset-mode-button {
-  height: 36px;
-  min-width: 36px;
-  padding: 0 8px;
-  font-size: 11px;
-}
-
-ha-card.compact .sensors {
-  gap: 8px;
-}
-
-ha-card.compact .sensor {
-  padding: 8px;
-}
-
-ha-card.compact .sensor-icon {
-  width: 30px;
-  height: 30px;
-}
-
-/* Horizontal layout */
-ha-card.horizontal .card-content {
-  flex-direction: row;
-  align-items: center;
-}
-
-ha-card.horizontal .card-header {
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 150px;
-}
-
-ha-card.horizontal .preset-modes {
-  flex: 1;
-  justify-content: center;
-}
-
-ha-card.horizontal .sensors {
-  flex: 1;
-}
-
 /* Loading animation */
 ha-circular-progress {
   width: 24px;
   height: 24px;
-}
-
-/* Button reset */
-button {
-  border: none;
-  outline: none;
-  font-family: inherit;
-  -webkit-tap-highlight-color: transparent;
 }

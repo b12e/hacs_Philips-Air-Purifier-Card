@@ -189,8 +189,7 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
-    // Hide controls if collapsible_controls is enabled and device is off
-    if (this.config.collapsible_controls && this.entity.state === 'off') {
+    if (this.entity.state === 'off') {
       return nothing;
     }
 
@@ -206,60 +205,68 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
-    // If preset modes are expanded, show all modes
-    if (this._showPresetModes) {
+    // Filter visible preset modes
+    const visibleModes = this.config.visible_preset_modes && this.config.visible_preset_modes.length > 0
+      ? preset_modes.filter((mode) => this.config.visible_preset_modes!.includes(mode.toLowerCase()))
+      : preset_modes;
+
+    if (visibleModes.length === 0) {
+      return nothing;
+    }
+
+    // If collapsible and not expanded, show button to expand
+    if (this.config.collapsible_preset_modes && !this._showPresetModes) {
       return html`
-        <div class="preset-modes">
-          ${preset_modes.map(
-            (mode) => html`
-              <button
-                class="preset-mode-button ${classMap({
-                  active: mode === preset_mode,
-                })}"
-                @click=${() => this.handlePresetMode(mode)}
-                title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
-              >
-                <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
-              </button>
-            `,
-          )}
-          ${this.config.show_child_lock && this.detectedEntities.child_lock
-            ? html`
-                <button
-                  class="preset-mode-button"
-                  @click=${() => this.callService('switch.toggle', {}, undefined, false)}
-                  title="Child Lock"
-                >
-                  <ha-icon icon="pap:child_lock_button"></ha-icon>
-                </button>
-              `
-            : nothing}
+        <div class="modes-container">
+          <button
+            class="mode-button"
+            @click=${this.handlePresetModesToggle}
+          >
+            <ha-icon icon="pap:${this.getPresetIcon(preset_mode)}"></ha-icon>
+            <span class="mode-label">${localize(`preset_mode.${preset_mode.toLowerCase()}`) || preset_mode}</span>
+          </button>
+          ${this.renderChildLockButton()}
         </div>
       `;
     }
 
-    // Otherwise show just a toggle button
+    // Show all modes as chips (Mushroom Climate style)
     return html`
-      <div class="preset-modes">
-        <button
-          class="preset-mode-button"
-          @click=${this.handlePresetModesToggle}
-          title="${localize(`preset_mode.${preset_mode.toLowerCase()}`) || preset_mode}"
-        >
-          <ha-icon icon="pap:${this.getPresetIcon(preset_mode)}"></ha-icon>
-        </button>
-        ${this.config.show_child_lock && this.detectedEntities.child_lock
-          ? html`
-              <button
-                class="preset-mode-button"
-                @click=${() => this.callService('switch.toggle', {}, undefined, false)}
-                title="Child Lock"
-              >
-                <ha-icon icon="pap:child_lock_button"></ha-icon>
-              </button>
-            `
-          : nothing}
+      <div class="modes-container">
+        ${visibleModes.map(
+          (mode) => html`
+            <button
+              class="mode-button ${classMap({
+                active: mode === preset_mode,
+              })}"
+              @click=${() => this.handlePresetMode(mode)}
+            >
+              <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
+              <span class="mode-label">${localize(`preset_mode.${mode.toLowerCase()}`) || mode}</span>
+            </button>
+          `,
+        )}
+        ${this.renderChildLockButton()}
       </div>
+    `;
+  }
+
+  private renderChildLockButton(): Template {
+    if (!this.config.show_child_lock || !this.detectedEntities.child_lock) {
+      return nothing;
+    }
+
+    const childLockState = this.hass.states[this.detectedEntities.child_lock];
+    const isLocked = childLockState?.state === 'on';
+
+    return html`
+      <button
+        class="mode-button child-lock ${classMap({ active: isLocked })}"
+        @click=${() => this.callService('switch.toggle', { entity_id: this.detectedEntities.child_lock }, undefined, false)}
+        title="Child Lock"
+      >
+        <ha-icon icon="pap:child_lock_button"></ha-icon>
+      </button>
     `;
   }
 
@@ -277,29 +284,21 @@ export class PurifierCard extends LitElement {
     return iconMap[mode.toLowerCase()] || 'fan_speed_button';
   }
 
-  private renderSensors(): Template {
-    if (!this.config.show_sensors || !this.detectedEntities) {
-      return nothing;
-    }
-
-    // Hide sensors if collapsible_controls is enabled and device is off
-    if (this.config.collapsible_controls && this.entity?.state === 'off') {
-      return nothing;
-    }
-
-    const sensors: Template[] = [];
+  private getSensorData(): Array<{key: string, label: string, value: string, unit: string, icon: string, entityId: string}> {
+    const sensors: Array<{key: string, label: string, value: string, unit: string, icon: string, entityId: string}> = [];
 
     // PM2.5
     if (this.detectedEntities.pm25) {
       const sensorState = this.hass.states[this.detectedEntities.pm25];
       if (sensorState) {
-        sensors.push(this.renderSensor(
-          'PM2.5',
-          sensorState.state,
-          sensorState.attributes.unit_of_measurement || 'μg/m³',
-          'pap:pm25',
-          this.detectedEntities.pm25,
-        ));
+        sensors.push({
+          key: 'pm25',
+          label: 'PM2.5',
+          value: sensorState.state,
+          unit: sensorState.attributes.unit_of_measurement || 'μg/m³',
+          icon: 'pap:pm25',
+          entityId: this.detectedEntities.pm25,
+        });
       }
     }
 
@@ -307,13 +306,14 @@ export class PurifierCard extends LitElement {
     if (this.detectedEntities.allergen_index) {
       const sensorState = this.hass.states[this.detectedEntities.allergen_index];
       if (sensorState) {
-        sensors.push(this.renderSensor(
-          'IAI',
-          sensorState.state,
-          sensorState.attributes.unit_of_measurement || '',
-          'pap:iai',
-          this.detectedEntities.allergen_index,
-        ));
+        sensors.push({
+          key: 'iai',
+          label: 'IAI',
+          value: sensorState.state,
+          unit: sensorState.attributes.unit_of_measurement || '',
+          icon: 'pap:iai',
+          entityId: this.detectedEntities.allergen_index,
+        });
       }
     }
 
@@ -321,13 +321,14 @@ export class PurifierCard extends LitElement {
     if (this.detectedEntities.humidity) {
       const sensorState = this.hass.states[this.detectedEntities.humidity];
       if (sensorState) {
-        sensors.push(this.renderSensor(
-          localize('sensors.humidity') || 'Humidity',
-          sensorState.state,
-          sensorState.attributes.unit_of_measurement || '%',
-          'mdi:water-percent',
-          this.detectedEntities.humidity,
-        ));
+        sensors.push({
+          key: 'humidity',
+          label: localize('sensors.humidity') || 'Humidity',
+          value: sensorState.state,
+          unit: sensorState.attributes.unit_of_measurement || '%',
+          icon: 'mdi:water-percent',
+          entityId: this.detectedEntities.humidity,
+        });
       }
     }
 
@@ -335,19 +336,71 @@ export class PurifierCard extends LitElement {
     if (this.detectedEntities.temperature) {
       const sensorState = this.hass.states[this.detectedEntities.temperature];
       if (sensorState) {
-        sensors.push(this.renderSensor(
-          localize('sensors.temperature') || 'Temperature',
-          sensorState.state,
-          sensorState.attributes.unit_of_measurement || '°C',
-          'mdi:thermometer',
-          this.detectedEntities.temperature,
-        ));
+        sensors.push({
+          key: 'temperature',
+          label: localize('sensors.temperature') || 'Temperature',
+          value: sensorState.state,
+          unit: sensorState.attributes.unit_of_measurement || '°C',
+          icon: 'mdi:thermometer',
+          entityId: this.detectedEntities.temperature,
+        });
       }
     }
 
-    return sensors.length > 0
-      ? html`<div class="sensors">${sensors}</div>`
-      : nothing;
+    // Filter by visible sensors if specified
+    if (this.config.visible_sensors && this.config.visible_sensors.length > 0) {
+      return sensors.filter((sensor) => this.config.visible_sensors!.includes(sensor.key));
+    }
+
+    return sensors;
+  }
+
+  private renderSensors(): Template {
+    if (!this.config.show_sensors || !this.detectedEntities) {
+      return nothing;
+    }
+
+    const sensors = this.getSensorData();
+    if (sensors.length === 0) {
+      return nothing;
+    }
+
+    return html`<div class="sensors">
+      ${sensors.map((sensor) => this.renderSensor(
+        sensor.label,
+        sensor.value,
+        sensor.unit,
+        sensor.icon,
+        sensor.entityId,
+      ))}
+    </div>`;
+  }
+
+  private renderSeparateSensorCards(): Template {
+    if (!this.config.show_sensors || !this.config.sensors_in_separate_card || !this.detectedEntities) {
+      return nothing;
+    }
+
+    const sensors = this.getSensorData();
+    if (sensors.length === 0) {
+      return nothing;
+    }
+
+    return html`<div class="sensor-cards">
+      ${sensors.map((sensor) => html`
+        <ha-card class="sensor-card" @click=${() => this.handleMore(sensor.entityId)}>
+          <div class="sensor-card-content">
+            <div class="sensor-icon">
+              <ha-icon icon="${sensor.icon}"></ha-icon>
+            </div>
+            <div class="sensor-info">
+              <div class="sensor-label">${sensor.label}</div>
+              <div class="sensor-value">${sensor.value} ${sensor.unit}</div>
+            </div>
+          </div>
+        </ha-card>
+      `)}
+    </div>`;
   }
 
   private renderSensor(
@@ -380,19 +433,14 @@ export class PurifierCard extends LitElement {
 
     return html`
       <div class="card-header">
-        <div
-          class="entity-info ${classMap({ clickable: this.config.show_power_button ?? false })}"
-          @click=${this.config.show_power_button ? () => this.handleToggle() : nothing}
-        >
-          <div class="icon-state ${classMap({ active: isOn })}">
-            <ha-icon icon="pap:power_button"></ha-icon>
-          </div>
-          <div class="info-content">
-            ${this.config.show_name ? html`<div class="name">${name}</div>` : nothing}
-            ${this.config.show_state
-              ? html`<div class="state-text">${stateText}</div>`
-              : nothing}
-          </div>
+        <div class="icon-state ${classMap({ active: isOn })}" @click=${() => this.handleToggle()}>
+          <ha-icon icon="pap:power_button"></ha-icon>
+        </div>
+        <div class="info-content">
+          ${this.config.show_name ? html`<div class="name">${name}</div>` : nothing}
+          ${this.config.show_state
+            ? html`<div class="state-text">${stateText}</div>`
+            : nothing}
         </div>
         <div class="header-actions">
           ${this.requestInProgress
@@ -432,10 +480,26 @@ export class PurifierCard extends LitElement {
       return this.renderUnavailable();
     }
 
+    // If sensors should be in separate cards, render main card + sensor cards
+    if (this.config.sensors_in_separate_card) {
+      return html`
+        <div class="card-container">
+          <ha-card class="mushroom-card ${classMap({
+            'fill-container': this.config.fill_container ?? false,
+          })}">
+            <div class="card-content">
+              ${this.renderHeader()}
+              ${this.renderPresetModes()}
+            </div>
+          </ha-card>
+          ${this.renderSeparateSensorCards()}
+        </div>
+      `;
+    }
+
+    // Otherwise render everything in one card
     return html`
       <ha-card class="mushroom-card ${classMap({
-        compact: this.config.compact_view,
-        horizontal: this.config.layout === 'horizontal',
         'fill-container': this.config.fill_container ?? false,
       })}">
         <div class="card-content">
