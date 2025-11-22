@@ -44,10 +44,11 @@ ha-card {
   box-shadow: var(--ha-card-box-shadow, none);
   box-sizing: border-box;
   overflow: hidden;
+  padding: 0;
 }
 
 ha-card.mushroom-card {
-  padding: 0;
+  padding: 0 !important;
 }
 
 ha-card.fill-container {
