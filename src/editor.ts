@@ -422,6 +422,18 @@ export class PurifierCardEditor extends LitElement {
               ${localize('editor.show_name')}
             </div>
 
+            ${this.config?.show_name
+              ? html`
+                  <ha-textfield
+                    .label=${localize('editor.name')}
+                    .value=${this.config?.name || ''}
+                    .placeholder=${localize('editor.name_placeholder')}
+                    .configValue=${'name'}
+                    @input=${this.valueChanged}
+                  ></ha-textfield>
+                `
+              : nothing}
+
             <div class="option">
               <ha-switch
                 aria-label=${localize(

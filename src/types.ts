@@ -47,6 +47,7 @@ export interface PurifierCardConfig {
   entity?: string; // Kept for backward compatibility
 
   // Display options
+  name?: string; // Custom name to display
   show_name: boolean;
   show_state: boolean;
   show_icon: boolean; // Show/hide the power button/icon

@@ -18,6 +18,10 @@
   width: 100%;
 }
 
+ha-textfield {
+  width: 100%;
+}
+
 /* Collapsible sections */
 .section {
   border: 1px solid var(--divider-color);

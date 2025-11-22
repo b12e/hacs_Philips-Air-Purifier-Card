@@ -357,7 +357,7 @@ export class PurifierCard extends LitElement {
     if (!this.entity) return nothing;
 
     const { state, attributes } = this.entity;
-    const name = attributes.friendly_name || 'Air Purifier';
+    const name = this.config.name || attributes.friendly_name || 'Air Purifier';
     const stateText = localize(`state.${state}`) || state;
     const isOn = state === 'on';
 
