@@ -266,21 +266,9 @@ export class PurifierCardEditor extends LitElement {
     const presetModes = entityState.attributes.preset_modes as string[] | undefined;
     if (!presetModes || presetModes.length === 0) return nothing;
 
-    // Define label mapping for preset modes
-    const presetModeLabels: Record<string, string> = {
-      auto: 'Auto',
-      sleep: 'Sleep',
-      turbo: 'Turbo',
-      speed_1: 'Speed 1',
-      speed_2: 'Speed 2',
-      speed_3: 'Speed 3',
-      allergen: 'Allergen',
-      bacteria: 'Bacteria',
-    };
-
     const availableModes: Array<{key: string, label: string}> = presetModes.map(mode => ({
       key: mode.toLowerCase(),
-      label: presetModeLabels[mode.toLowerCase()] || mode
+      label: localize(`preset_mode.${mode.toLowerCase()}`) || mode
     }));
 
     const visibleModes = this.config?.visible_preset_modes || [];
