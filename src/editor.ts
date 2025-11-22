@@ -378,17 +378,6 @@ export class PurifierCardEditor extends LitElement {
           </ha-select>
         </div>
 
-        ${this.config?.detected_entities?.fan
-          ? html`
-              <div class="detected-info">
-                <ha-alert alert-type="info">
-                  ${localize('editor.detected_entities')}:
-                  ${Object.keys(this.config?.detected_entities ?? {}).length}
-                </ha-alert>
-              </div>
-            `
-          : nothing}
-
         <!-- Display Section -->
         ${this.renderSection(
           'display',
