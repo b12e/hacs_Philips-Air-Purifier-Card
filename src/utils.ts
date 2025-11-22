@@ -100,10 +100,27 @@ export function filterPhilipsDevices(devices: any[]): any[] {
     const model = device.model?.toLowerCase() || '';
     const name = device.name_by_user?.toLowerCase() || device.name?.toLowerCase() || '';
 
-    return (
-      manufacturer.includes('philips') &&
-      (model.includes('air') || model.includes('purifier') ||
-       name.includes('air') || name.includes('purifier'))
-    );
+    // Debug logging for first few devices
+    if (devices.indexOf(device) < 5) {
+      console.log('Device:', {
+        name: device.name_by_user || device.name,
+        manufacturer: device.manufacturer,
+        model: device.model,
+        id: device.id
+      });
+    }
+
+    // Match Philips devices or devices with philips/purifier in name
+    const isPhilips = manufacturer.includes('philips') ||
+                      name.includes('philips') ||
+                      model.includes('philips');
+
+    const isPurifier = model.includes('air') ||
+                       model.includes('purifier') ||
+                       name.includes('air') ||
+                       name.includes('purifier') ||
+                       name.includes('luchtreiniger'); // Dutch for air purifier
+
+    return isPhilips || isPurifier;
   });
 }
