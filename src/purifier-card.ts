@@ -46,6 +46,7 @@ export class PurifierCard extends LitElement {
   @state() private config!: PurifierCardConfig;
   @state() private requestInProgress = false;
   @state() private detectedEntities: DetectedEntities = {};
+  @state() private _showPresetModes = false;
 
   public static get styles(): CSSResultGroup {
     return styles;
@@ -158,10 +159,16 @@ export class PurifierCard extends LitElement {
 
   private handlePresetMode(presetMode: string) {
     this.callService('fan.set_preset_mode', { preset_mode: presetMode });
+    this._showPresetModes = false;
   }
 
   private handleToggle() {
     this.callService('fan.toggle');
+  }
+
+  private handlePresetModesToggle(e: Event): void {
+    e.stopPropagation();
+    this._showPresetModes = !this._showPresetModes;
   }
 
   private renderPresetModes(): Template {
@@ -186,21 +193,48 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
+    // If preset modes are expanded, show all modes
+    if (this._showPresetModes) {
+      return html`
+        <div class="preset-modes">
+          ${preset_modes.map(
+            (mode) => html`
+              <button
+                class="preset-mode-button ${classMap({
+                  active: mode === preset_mode,
+                })}"
+                @click=${() => this.handlePresetMode(mode)}
+                title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
+              >
+                <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
+              </button>
+            `,
+          )}
+          ${this.config.show_child_lock && this.detectedEntities.child_lock
+            ? html`
+                <button
+                  class="preset-mode-button"
+                  @click=${() => this.callService('switch.toggle', {}, undefined, false)}
+                  title="Child Lock"
+                >
+                  <ha-icon icon="pap:child_lock_button"></ha-icon>
+                </button>
+              `
+            : nothing}
+        </div>
+      `;
+    }
+
+    // Otherwise show just a toggle button
     return html`
       <div class="preset-modes">
-        ${preset_modes.map(
-          (mode) => html`
-            <button
-              class="preset-mode-button ${classMap({
-                active: mode === preset_mode,
-              })}"
-              @click=${() => this.handlePresetMode(mode)}
-              title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
-            >
-              <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
-            </button>
-          `,
-        )}
+        <button
+          class="preset-mode-button"
+          @click=${this.handlePresetModesToggle}
+          title="${localize(`preset_mode.${preset_mode.toLowerCase()}`) || preset_mode}"
+        >
+          <ha-icon icon="pap:${this.getPresetIcon(preset_mode)}"></ha-icon>
+        </button>
         ${this.config.show_child_lock && this.detectedEntities.child_lock
           ? html`
               <button
