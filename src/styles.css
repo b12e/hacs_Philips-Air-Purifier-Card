@@ -275,10 +275,20 @@ ha-card.fill-container {
   scrollbar-width: thin;
 }
 
+.sensor-cards.fill-container {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
 .sensor-card {
   flex: 0 0 auto;
   min-width: 140px;
   cursor: pointer;
+}
+
+.sensor-cards.fill-container .sensor-card {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .sensor-card-content {

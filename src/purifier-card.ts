@@ -314,7 +314,9 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
-    return html`<div class="sensor-cards">
+    return html`<div class="sensor-cards ${classMap({
+      'fill-container': this.config.fill_container ?? false,
+    })}">
       ${sensors.map((sensor) => html`
         <ha-card class="sensor-card" @click=${() => this.handleMore(sensor.entityId)}>
           <div class="sensor-card-content">
