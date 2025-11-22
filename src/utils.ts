@@ -91,13 +91,28 @@ export async function getDevices(hass: HomeAssistant): Promise<any[]> {
   }
 }
 
+// Supported Philips Air Purifier models from the philips-airpurifier-coap integration
+const SUPPORTED_MODELS = [
+  'AC0850', 'AC0950', 'AC0951', 'AC1214', 'AC1715',
+  'AC2729', 'AC2889', 'AC2936', 'AC2939', 'AC2958', 'AC2959',
+  'AC3033', 'AC3036', 'AC3039', 'AC3055', 'AC3059',
+  'AC3210', 'AC3220', 'AC3221', 'AC3259',
+  'AC3420', 'AC3421', 'AC3737', 'AC3829', 'AC3836',
+  'AC3854', 'AC3858',
+  'AC4220', 'AC4221', 'AC4236', 'AC4550', 'AC4558',
+  'AC5659', 'AC5660',
+  'AMF765', 'AMF870',
+  'CX3120', 'CX3550', 'CX5120',
+  'HU1509', 'HU1510', 'HU5710'
+];
+
 /**
  * Filter devices to show only Philips Air Purifiers
  */
 export function filterPhilipsDevices(devices: any[]): any[] {
   return devices.filter((device) => {
     const manufacturer = device.manufacturer?.toLowerCase() || '';
-    const model = device.model?.toLowerCase() || '';
+    const model = device.model?.toUpperCase() || '';
     const name = device.name_by_user?.toLowerCase() || device.name?.toLowerCase() || '';
 
     // Debug logging for first few devices
@@ -110,17 +125,15 @@ export function filterPhilipsDevices(devices: any[]): any[] {
       });
     }
 
-    // Match Philips Air Purifiers:
-    // 1. Manufacturer is Philips AND model starts with AC (Philips Air Purifier models)
-    // 2. OR name contains philips/air/purifier keywords
+    // Match Philips manufacturer AND model is in supported list
     const isPhilipsManufacturer = manufacturer.includes('philips');
-    const isAirPurifierModel = model.match(/^ac\d{4}/) !== null; // Matches AC3033, AC4221, etc.
 
-    const hasKeywords = name.includes('philips') ||
-                        name.includes('air') ||
-                        name.includes('purifier') ||
-                        name.includes('luchtreiniger'); // Dutch for air purifier
+    // Check if model matches any supported model (with or without variant suffix like /11, /20, etc.)
+    const modelBase = model.replace(/\/\d+$/, ''); // Remove /11, /20, etc. suffix
+    const isSupportedModel = SUPPORTED_MODELS.some(supportedModel =>
+      model.startsWith(supportedModel) || modelBase === supportedModel
+    );
 
-    return (isPhilipsManufacturer && isAirPurifierModel) || hasKeywords;
+    return isPhilipsManufacturer && isSupportedModel;
   });
 }
