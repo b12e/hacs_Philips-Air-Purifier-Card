@@ -409,7 +409,7 @@ export class PurifierCard extends LitElement {
     if (hasPresetModes && this.config.collapsible_preset_modes && !this._showPresetModes) {
       return html`
         <button
-          class="control-button"
+          class="control-button active"
           @click=${this.handlePresetModesToggle}
           title="${localize(`preset_mode.${preset_mode!.toLowerCase()}`) || preset_mode}"
         >
