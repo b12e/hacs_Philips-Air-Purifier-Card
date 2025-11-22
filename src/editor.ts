@@ -69,8 +69,22 @@ export class PurifierCardEditor extends LitElement {
 
   protected async updated(changedProps: Map<string, any>) {
     super.updated(changedProps);
-    if (changedProps.has('hass') && this.hass && this.devices.length === 0) {
-      await this.loadDevices();
+
+    // Load devices when hass becomes available or when editor is opened
+    if (changedProps.has('hass') && this.hass) {
+      if (this.devices.length === 0) {
+        await this.loadDevices();
+      }
+
+      // If we have a device_id in config but no detected entities, run detection
+      if (this.config?.device_id && !this.config?.detected_entities?.fan) {
+        const detected = detectPhilipsEntities(this.hass, this.config.device_id);
+        this.config = {
+          ...this.config,
+          detected_entities: detected,
+          entity: detected.fan,
+        };
+      }
     }
   }
 
