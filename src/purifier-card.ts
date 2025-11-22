@@ -452,6 +452,13 @@ export class PurifierCard extends LitElement {
       return html`
         <div class="preset-modes-container">
           ${modesHtml}
+          <button
+            class="control-button close-button"
+            @click=${this.handlePresetModesToggle}
+            title="Close"
+          >
+            <ha-icon icon="mdi:close"></ha-icon>
+          </button>
         </div>
         ${this.renderChildLockInlineButton()}
       `;
