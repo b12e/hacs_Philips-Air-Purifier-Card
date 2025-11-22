@@ -1,6 +1,6 @@
 {
   "name": "philips-purifier-card",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Philips Air Purifier card for Home Assistant with device-based configuration and Mushroom styling",
   "main": "dist/philips-purifier-card.js",
   "scripts": {

@@ -365,18 +365,18 @@ export class PurifierCardEditor extends LitElement {
             ${this.devices.length === 0
               ? html`<mwc-list-item value="">Loading devices...</mwc-list-item>`
               : this.devices.map(
-                  (device) =>
-                    html`<mwc-list-item
+                  (device) => {
+                    const deviceName = device.name_by_user || device.name;
+                    const areaName = device.area_id ? this.getAreaName(device.area_id) : '';
+                    const displayText = areaName ? `${deviceName} (${areaName})` : deviceName;
+
+                    return html`<mwc-list-item
                       .value=${device.id}
                       .selected=${device.id === this.config?.device_id}
                     >
-                      <span style="display: flex; flex-direction: column; gap: 2px;">
-                        <span style="font-weight: 500;">${device.name_by_user || device.name}</span>
-                        <span style="font-size: 0.85em; opacity: 0.7;">
-                          ${device.model}${device.area_id ? ` • ${this.getAreaName(device.area_id)}` : ''}
-                        </span>
-                      </span>
-                    </mwc-list-item>`,
+                      ${displayText}
+                    </mwc-list-item>`;
+                  }
                 )}
           </ha-select>
         </div>
