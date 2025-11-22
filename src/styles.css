@@ -66,7 +66,6 @@ ha-card.fill-container {
   align-items: center;
   gap: var(--spacing);
   padding: var(--spacing);
-  cursor: pointer;
 }
 
 /* Actions - Inline controls */
@@ -189,7 +188,15 @@ ha-card.fill-container {
   gap: 6px;
   padding: 6px;
   border-radius: calc(var(--control-border-radius) + 4px);
-  background: rgba(var(--rgb-primary-text-color), 0.05);
+  background: rgba(var(--rgb-primary-text-color), 0.1);
+}
+
+.preset-modes-container .control-button {
+  background-color: rgba(var(--rgb-primary-text-color), 0.05);
+}
+
+.preset-modes-container .control-button:hover:not(.active) {
+  background: rgba(var(--rgb-primary-text-color), 0.15);
 }
 
 /* Modes Container - Mushroom Climate Style */
