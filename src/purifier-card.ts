@@ -88,12 +88,13 @@ export class PurifierCard extends LitElement {
   }
 
   get entity(): PurifierEntity | undefined {
+    if (!this.config || !this.hass) return undefined;
     const entityId = this.config.entity || this.detectedEntities.fan;
     return entityId ? (this.hass.states[entityId] as PurifierEntity) : undefined;
   }
 
   public getCardSize() {
-    return this.config.compact_view ? 1 : 3;
+    return this.config?.compact_view ? 1 : 3;
   }
 
   protected shouldUpdate(changedProps: PropertyValues) {
@@ -377,6 +378,18 @@ export class PurifierCard extends LitElement {
   }
 
   protected render() {
+    // If no config yet (e.g., during card picker preview), show a simple card
+    if (!this.config) {
+      return html`
+        <ha-card class="mushroom-card">
+          <div class="card-content unavailable">
+            <ha-icon icon="pap:power_button"></ha-icon>
+            <div>${localize('common.name')}</div>
+          </div>
+        </ha-card>
+      `;
+    }
+
     if (!this.entity) {
       return this.renderUnavailable();
     }
@@ -405,7 +418,6 @@ declare global {
 
 window.customCards = window.customCards || [];
 window.customCards.push({
-  preview: true,
   type: 'custom:philips-purifier-card',
   name: localize('common.name'),
   description: localize('common.description'),
