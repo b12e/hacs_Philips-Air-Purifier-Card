@@ -434,7 +434,7 @@ declare global {
 
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: 'custom:philips-purifier-card',
+  type: 'philips-purifier-card',
   name: localize('common.name'),
   description: localize('common.description'),
   preview: true,
