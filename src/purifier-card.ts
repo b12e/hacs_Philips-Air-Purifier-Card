@@ -79,12 +79,14 @@ export class PurifierCard extends LitElement {
   public setConfig(config: Partial<PurifierCardConfig>) {
     this.config = buildConfig(config);
 
-    // Auto-detect entities if device_id is provided
-    if (this.config.device_id && this.hass) {
-      this.detectedEntities = this.config.detected_entities ||
-        detectPhilipsEntities(this.hass, this.config.device_id);
-    } else if (this.config.detected_entities) {
+    // Store detected entities from config if provided
+    if (this.config.detected_entities) {
       this.detectedEntities = this.config.detected_entities;
+    }
+
+    // Auto-detect entities if device_id is provided and hass is available
+    if (this.config.device_id && this.hass) {
+      this.detectedEntities = detectPhilipsEntities(this.hass, this.config.device_id);
     }
   }
 
@@ -99,6 +101,11 @@ export class PurifierCard extends LitElement {
   }
 
   protected shouldUpdate(changedProps: PropertyValues) {
+    // If hass changed and we have a device_id but no detected entities, run detection
+    if (changedProps.has('hass') && this.config?.device_id && !this.detectedEntities.fan) {
+      this.detectedEntities = detectPhilipsEntities(this.hass, this.config.device_id);
+    }
+
     return hasConfigOrEntityChanged(this, changedProps, false);
   }
 
@@ -107,7 +114,7 @@ export class PurifierCard extends LitElement {
     if (
       entityId &&
       changedProps.get('hass') &&
-      changedProps.get('hass').states[entityId] !==
+      changedProps.get('hass')?.states[entityId] !==
         this.hass.states[entityId]
     ) {
       this.requestInProgress = false;
