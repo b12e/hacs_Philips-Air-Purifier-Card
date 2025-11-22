@@ -1,6 +1,6 @@
 :host {
   /* Mushroom standard spacing and sizing */
-  --spacing: 8px;
+  --spacing: 12px;
   --icon-size: 40px;
   --icon-border-radius: 50%;
   --control-height: 40px;
@@ -59,6 +59,7 @@ ha-card.fill-container {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  padding: 0;
 }
 
 /* State Item - Mushroom style */
@@ -113,6 +114,7 @@ ha-card.fill-container {
 
 .icon-state ha-icon {
   --mdc-icon-size: 24px;
+  line-height: 0;
 }
 
 .info-content {
