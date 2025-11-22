@@ -102,7 +102,7 @@ export class PurifierCardEditor extends LitElement {
       this.areas = [];
     }
 
-    this.requestUpdate();
+    // Don't call requestUpdate() here to avoid resetting the dropdown
   }
 
   private getAreaName(areaId: string): string {
@@ -231,31 +231,6 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            aria-label=${localize(
-              this.config.show_toolbar
-                ? 'editor.show_toolbar_aria_label_off'
-                : 'editor.show_toolbar_aria_label_on',
-            )}
-            .checked=${this.config.show_toolbar ?? true}
-            .configValue=${'show_toolbar'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.show_toolbar')}
-        </div>
-
-        <div class="option">
-          <ha-switch
-            .checked=${this.config.show_power_button ?? true}
-            .configValue=${'show_power_button'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Show Power Button (Click icon to toggle)
-        </div>
-
-        <div class="option">
-          <ha-switch
             .checked=${this.config.show_child_lock ?? true}
             .configValue=${'show_child_lock'}
             @change=${this.valueChanged}
@@ -266,12 +241,22 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            .checked=${this.config.collapsible_controls ?? false}
-            .configValue=${'collapsible_controls'}
+            .checked=${this.config.sensors_in_separate_card ?? true}
+            .configValue=${'sensors_in_separate_card'}
             @change=${this.valueChanged}
           >
           </ha-switch>
-          Collapsible Controls (Hide when off)
+          Show Sensors in Separate Cards
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config.collapsible_preset_modes ?? false}
+            .configValue=${'collapsible_preset_modes'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Collapsible Preset Modes
         </div>
 
         <div class="option">

@@ -185,7 +185,7 @@ export class PurifierCard extends LitElement {
   }
 
   private renderPresetModes(): Template {
-    if (!this.entity || !this.config.show_preset_modes) {
+    if (!this.entity) {
       return nothing;
     }
 
@@ -197,40 +197,41 @@ export class PurifierCard extends LitElement {
       attributes: { preset_mode, preset_modes, supported_features = 0 },
     } = this.entity;
 
-    if (
-      !preset_mode ||
-      !preset_modes ||
-      !(supported_features & SUPPORT_PRESET_MODE)
-    ) {
-      return nothing;
-    }
+    const hasPresetModes = this.config.show_preset_modes &&
+      preset_mode &&
+      preset_modes &&
+      (supported_features & SUPPORT_PRESET_MODE);
 
     // Filter visible preset modes
-    const visibleModes = this.config.visible_preset_modes && this.config.visible_preset_modes.length > 0
-      ? preset_modes.filter((mode) => this.config.visible_preset_modes!.includes(mode.toLowerCase()))
-      : preset_modes;
+    let visibleModes: string[] = [];
+    if (hasPresetModes) {
+      visibleModes = this.config.visible_preset_modes && this.config.visible_preset_modes.length > 0
+        ? preset_modes!.filter((mode) => this.config.visible_preset_modes!.includes(mode.toLowerCase()))
+        : preset_modes!;
+    }
 
-    if (visibleModes.length === 0) {
+    // If no preset modes and no child lock, return nothing
+    if (visibleModes.length === 0 && !this.config.show_child_lock) {
       return nothing;
     }
 
     // If collapsible and not expanded, show button to expand
-    if (this.config.collapsible_preset_modes && !this._showPresetModes) {
+    if (hasPresetModes && this.config.collapsible_preset_modes && !this._showPresetModes) {
       return html`
         <div class="modes-container">
           <button
             class="mode-button"
             @click=${this.handlePresetModesToggle}
           >
-            <ha-icon icon="pap:${this.getPresetIcon(preset_mode)}"></ha-icon>
-            <span class="mode-label">${localize(`preset_mode.${preset_mode.toLowerCase()}`) || preset_mode}</span>
+            <ha-icon icon="pap:${this.getPresetIcon(preset_mode!)}"></ha-icon>
+            <span class="mode-label">${localize(`preset_mode.${preset_mode!.toLowerCase()}`) || preset_mode}</span>
           </button>
           ${this.renderChildLockButton()}
         </div>
       `;
     }
 
-    // Show all modes as chips (Mushroom Climate style)
+    // Show all modes as chips (Mushroom Climate style) plus child lock
     return html`
       <div class="modes-container">
         ${visibleModes.map(
@@ -434,7 +435,7 @@ export class PurifierCard extends LitElement {
     return html`
       <div class="card-header">
         <div class="icon-state ${classMap({ active: isOn })}" @click=${() => this.handleToggle()}>
-          <ha-icon icon="pap:power_button"></ha-icon>
+          <ha-icon icon="mdi:fan"></ha-icon>
         </div>
         <div class="info-content">
           ${this.config.show_name ? html`<div class="name">${name}</div>` : nothing}
@@ -469,7 +470,7 @@ export class PurifierCard extends LitElement {
       return html`
         <ha-card class="mushroom-card">
           <div class="card-content unavailable">
-            <ha-icon icon="pap:power_button"></ha-icon>
+            <ha-icon icon="mdi:fan"></ha-icon>
             <div>${localize('common.name')}</div>
           </div>
         </ha-card>
