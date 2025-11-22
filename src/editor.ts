@@ -588,6 +588,20 @@ export class PurifierCardEditor extends LitElement {
               ${localize('editor.show_preset_modes')}
             </div>
 
+            ${this.config?.show_preset_modes
+              ? html`
+                  <div class="option">
+                    <ha-switch
+                      .checked=${this.config?.collapsible_preset_modes ?? false}
+                      .configValue=${'collapsible_preset_modes'}
+                      @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    ${localize('editor.collapsible_preset_modes')}
+                  </div>
+                `
+              : nothing}
+
             ${this.config?.show_preset_modes && (this.config?.entity || this.config?.detected_entities?.fan)
               ? html`
                   <div style="margin-top: 8px;">

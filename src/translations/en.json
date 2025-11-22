@@ -58,6 +58,7 @@
     "show_preset_modes": "Show Preset Modes",
     "show_preset_modes_aria_label_on": "Toggle display preset modes on",
     "show_preset_modes_aria_label_off": "Toggle display preset modes off",
+    "collapsible_preset_modes": "Collapsible Preset Modes",
     "visible_preset_modes": "Visible Preset Modes",
     "show_sensors": "Show Sensors",
     "show_sensors_aria_label_on": "Toggle display sensors on",
