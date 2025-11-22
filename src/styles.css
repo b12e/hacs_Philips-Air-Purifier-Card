@@ -188,9 +188,12 @@ ha-card.fill-container {
 
 /* Preset Modes Container - When Expanded */
 .preset-modes-container {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--control-spacing);
+  gap: 6px;
+  padding: 6px;
+  border-radius: calc(var(--control-border-radius) + 4px);
+  background: rgba(var(--rgb-primary-text-color), 0.05);
 }
 
 /* Modes Container - Mushroom Climate Style */
