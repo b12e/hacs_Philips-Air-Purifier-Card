@@ -4,8 +4,6 @@
 
 A modern, Mushroom-inspired card with device-based configuration and automatic entity detection for Philips Air Purifiers.
 
-![Philips Air Purifier Card](https://img.shields.io/badge/version-3.0.0-blue.svg)
-
 ## ✨ Key Features
 
 - **Device-Based Configuration** - Select your device, entities are auto-detected
@@ -26,26 +24,6 @@ A modern, Mushroom-inspired card with device-based configuration and automatic e
 5. Click "Install"
 6. Restart Home Assistant
 
-### Manual Installation
-
-1. Download `philips-purifier-card.js` from the [latest release](https://github.com/yourusername/philips-purifier-card/releases/latest)
-2. Copy to `config/www` folder
-3. Add resource to Lovelace:
-
-   **Via UI:** Configuration → Dashboards → Resources → Add Resource
-   - URL: `/local/philips-purifier-card.js`
-   - Type: JavaScript Module
-
-   **Via YAML:**
-   ```yaml
-   lovelace:
-     resources:
-       - url: /local/philips-purifier-card.js
-         type: module
-   ```
-
-4. Restart Home Assistant
-
 ## 📋 Requirements
 
 This card requires the [Philips AirPurifier CoAP integration](https://github.com/kongo09/philips-airpurifier-coap) by kongo09.
@@ -60,35 +38,8 @@ This card requires the [Philips AirPurifier CoAP integration](https://github.com
 4. Entities are automatically detected!
 5. Customize display options
 
-### YAML Configuration
 
-#### Device-Based (Recommended)
-
-```yaml
-type: custom:philips-purifier-card
-device_id: abc123def456  # Auto-detected from device
-show_name: true
-show_state: true
-show_preset_modes: true
-show_sensors: true
-show_toolbar: true
-compact_view: false
-layout: vertical
-```
-
-#### Entity-Based (Legacy)
-
-```yaml
-type: custom:philips-purifier-card
-entity: fan.philips_air_purifier
-show_name: true
-show_state: true
-show_preset_modes: true
-show_sensors: true
-show_toolbar: true
-```
-
-### Configuration Options
+### Yaml Configuration Options
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
@@ -103,56 +54,6 @@ show_toolbar: true
 | `compact_view` | boolean | `false` | Compact layout |
 | `layout` | string | `vertical` | `vertical` or `horizontal` |
 
-### Auto-Detected Entities
-
-- Fan control
-- PM2.5 sensor
-- IAI/Allergen Index
-- Humidity sensor
-- Temperature sensor
-- Filter sensors
-- Child lock switch
-- Display light
-
-## 🎨 Styling
-
-The card uses Mushroom-inspired design and automatically adapts to your Home Assistant theme.
-
-### Custom Styling with card-mod
-
-```yaml
-type: custom:philips-purifier-card
-device_id: abc123
-card_mod:
-  style: |
-    ha-card {
-      --primary-color: #0066CC;
-      --spacing: 16px;
-    }
-```
-
-## 📝 Examples
-
-### Minimal Setup
-```yaml
-type: custom:philips-purifier-card
-device_id: abc123
-```
-
-### Compact View
-```yaml
-type: custom:philips-purifier-card
-device_id: abc123
-compact_view: true
-show_preset_modes: false
-```
-
-### Horizontal Layout
-```yaml
-type: custom:philips-purifier-card
-device_id: abc123
-layout: horizontal
-```
 
 ## Supported languages
 
@@ -176,7 +77,6 @@ This card supports translations. Please, help to add more translations and impro
 - Español (Spanish)
 - Slovenčina (Slovak)
 - Português (Portuguese)
-- [_Your language?_][add-translation]
 
 ## 🔧 Supported Models
 
@@ -194,20 +94,7 @@ Supported models include (from the integration):
 - CX3120, CX3550, CX5120
 - HU1509, HU1510, HU5710
 
-And many more! See the [integration's README](https://github.com/kongo09/philips-airpurifier-coap#supported-models) for a complete list.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please check [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-## 💬 Support
-
-- [Report Issues](https://github.com/yourusername/philips-purifier-card/issues)
-- [Home Assistant Community](https://community.home-assistant.io/)
-
-## 📜 License
-
-MIT © Bram Kragten
+And many more! See the [Philips Airpurifier integration's README](https://github.com/kongo09/philips-airpurifier-coap#supported-models) for a complete list.
 
 ## 🙏 Credits
 
@@ -215,20 +102,6 @@ MIT © Bram Kragten
 - [Philips AirPurifier CoAP](https://github.com/kongo09/philips-airpurifier-coap) integration by kongo09
 - [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) design inspiration by piitaya
 
-## 📋 Changelog
-
-### 3.0.0 (2024)
-
-**Major Redesign**
-- Complete rewrite with Mushroom-inspired styling
-- Device-based configuration with automatic entity detection
-- Visual preset mode controls with official Philips icons
-- Improved sensor display with responsive grid layout
-- Added horizontal and compact layout options
-- Modern UI with smooth animations and transitions
-- Better responsive design
-- Removed legacy slider controls
-- Focused specifically on Philips Air Purifiers
 
 <!-- Badges -->
 
