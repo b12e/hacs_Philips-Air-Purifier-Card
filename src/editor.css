@@ -1,7 +1,7 @@
 .card-config {
   flex-direction: column;
   display: flex;
-  gap: 10px;
+  gap: 16px;
 }
 
 .option {
@@ -16,4 +16,65 @@
 .option ha-select,
 .option paper-input {
   width: 100%;
+}
+
+/* Collapsible sections */
+.section {
+  border: 1px solid var(--divider-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: var(--card-background-color);
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.section-header:hover {
+  background: var(--secondary-background-color);
+}
+
+.section-header ha-icon {
+  margin-right: 12px;
+  color: var(--primary-text-color);
+  --mdc-icon-size: 24px;
+}
+
+.section-header-title {
+  flex: 1;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--primary-text-color);
+}
+
+.section-header ha-icon-button {
+  --mdc-icon-button-size: 36px;
+  --mdc-icon-size: 20px;
+  margin: -6px;
+  color: var(--secondary-text-color);
+  transition: transform 0.2s;
+}
+
+.section-header ha-icon-button.expanded {
+  transform: rotate(180deg);
+}
+
+.section-content {
+  padding: 0 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-content.collapsed {
+  display: none;
+}
+
+.detected-info {
+  margin-bottom: 8px;
 }

@@ -23,6 +23,8 @@ export class PurifierCardEditor extends LitElement {
   @state() private devices: any[] = [];
   @state() private areas: any[] = [];
 
+  @state() private expandedSections: Set<string> = new Set(['display', 'icon', 'sensors', 'controls']);
+
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
     // Ensure config is always initialized with defaults
     this.config = {
@@ -126,6 +128,42 @@ export class PurifierCardEditor extends LitElement {
   private getAreaName(areaId: string): string {
     const area = this.areas.find((a) => a.area_id === areaId);
     return area?.name || 'Unknown';
+  }
+
+  private toggleSection(sectionId: string): void {
+    if (this.expandedSections.has(sectionId)) {
+      this.expandedSections.delete(sectionId);
+    } else {
+      this.expandedSections.add(sectionId);
+    }
+    this.requestUpdate();
+  }
+
+  private renderSection(
+    id: string,
+    icon: string,
+    titleKey: string,
+    content: Template
+  ): Template {
+    const isExpanded = this.expandedSections.has(id);
+
+    return html`
+      <div class="section">
+        <div
+          class="section-header"
+          @click=${() => this.toggleSection(id)}
+        >
+          <ha-icon .icon=${icon}></ha-icon>
+          <span class="section-header-title">${localize(`editor.section_${titleKey}`)}</span>
+          <ha-icon-button class=${isExpanded ? 'expanded' : ''}>
+            <ha-icon icon="mdi:chevron-down"></ha-icon>
+          </ha-icon-button>
+        </div>
+        <div class="section-content ${isExpanded ? '' : 'collapsed'}">
+          ${content}
+        </div>
+      </div>
+    `;
   }
 
   private renderSensorCheckboxes(): Template {
@@ -325,6 +363,7 @@ export class PurifierCardEditor extends LitElement {
 
     return html`
       <div class="card-config">
+        <!-- Device Selector -->
         <div class="option">
           <ha-select
             .label=${localize('editor.device')}
@@ -362,157 +401,205 @@ export class PurifierCardEditor extends LitElement {
             `
           : nothing}
 
-        <div class="option">
-          <ha-switch
-            aria-label=${localize(
-              this.config?.show_name
-                ? 'editor.show_name_aria_label_off'
-                : 'editor.show_name_aria_label_on',
-            )}
-            .checked=${this.config?.show_name ?? true}
-            .configValue=${'show_name'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.show_name')}
-        </div>
+        <!-- Display Section -->
+        ${this.renderSection(
+          'display',
+          'mdi:monitor',
+          'display',
+          html`
+            <div class="option">
+              <ha-switch
+                aria-label=${localize(
+                  this.config?.show_name
+                    ? 'editor.show_name_aria_label_off'
+                    : 'editor.show_name_aria_label_on',
+                )}
+                .checked=${this.config?.show_name ?? true}
+                .configValue=${'show_name'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_name')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            aria-label=${localize(
-              this.config?.show_state
-                ? 'editor.show_state_aria_label_off'
-                : 'editor.show_state_aria_label_on',
-            )}
-            .checked=${this.config?.show_state ?? true}
-            .configValue=${'show_state'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.show_state')}
-        </div>
+            <div class="option">
+              <ha-switch
+                aria-label=${localize(
+                  this.config?.show_state
+                    ? 'editor.show_state_aria_label_off'
+                    : 'editor.show_state_aria_label_on',
+                )}
+                .checked=${this.config?.show_state ?? true}
+                .configValue=${'show_state'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_state')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.show_icon ?? true}
-            .configValue=${'show_icon'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Show Icon
-        </div>
+            <div class="option">
+              <ha-switch
+                .checked=${this.config?.fill_container ?? false}
+                .configValue=${'fill_container'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.fill_container')}
+            </div>
+          `
+        )}
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.icon_animation ?? true}
-            .configValue=${'icon_animation'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Animate Icon
-        </div>
+        <!-- Icon Section -->
+        ${this.renderSection(
+          'icon',
+          'mdi:image-outline',
+          'icon',
+          html`
+            <div class="option">
+              <ha-switch
+                .checked=${this.config?.show_icon ?? true}
+                .configValue=${'show_icon'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_icon')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            aria-label=${localize(
-              this.config?.show_preset_modes
-                ? 'editor.show_preset_modes_aria_label_off'
-                : 'editor.show_preset_modes_aria_label_on',
-            )}
-            .checked=${this.config?.show_preset_modes ?? true}
-            .configValue=${'show_preset_modes'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.show_preset_modes')}
-        </div>
+            ${this.config?.show_icon
+              ? html`
+                  <div class="option">
+                    <ha-switch
+                      .checked=${this.config?.icon_animation ?? true}
+                      .configValue=${'icon_animation'}
+                      @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    ${localize('editor.icon_animation')}
+                  </div>
+                `
+              : nothing}
+          `
+        )}
 
-        ${this.config?.show_preset_modes && (this.config?.entity || this.config?.detected_entities?.fan)
-          ? this.renderPresetModeCheckboxes()
-          : nothing}
+        <!-- Sensors Section -->
+        ${this.renderSection(
+          'sensors',
+          'mdi:chip',
+          'sensors',
+          html`
+            <div class="option">
+              <ha-switch
+                aria-label=${localize(
+                  this.config?.show_sensors
+                    ? 'editor.show_sensors_aria_label_off'
+                    : 'editor.show_sensors_aria_label_on',
+                )}
+                .checked=${this.config?.show_sensors ?? true}
+                .configValue=${'show_sensors'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_sensors')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            aria-label=${localize(
-              this.config?.show_sensors
-                ? 'editor.show_sensors_aria_label_off'
-                : 'editor.show_sensors_aria_label_on',
-            )}
-            .checked=${this.config?.show_sensors ?? true}
-            .configValue=${'show_sensors'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.show_sensors')}
-        </div>
+            ${this.config?.show_sensors
+              ? html`
+                  ${this.config?.detected_entities
+                    ? html`
+                        <div style="margin-top: 8px;">
+                          <div style="font-weight: 500; margin-bottom: 8px; font-size: 12px; color: var(--secondary-text-color);">
+                            ${localize('editor.visible_sensors')}
+                          </div>
+                          ${this.renderSensorCheckboxes()}
+                        </div>
+                      `
+                    : nothing}
 
-        ${this.config?.show_sensors && this.config?.detected_entities
-          ? this.renderSensorCheckboxes()
-          : nothing}
+                  <div class="option">
+                    <ha-switch
+                      .checked=${this.config?.sensors_in_separate_card ?? true}
+                      .configValue=${'sensors_in_separate_card'}
+                      @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    ${localize('editor.sensors_in_separate_card')}
+                  </div>
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.show_child_lock ?? true}
-            .configValue=${'show_child_lock'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Show Child Lock Button
-        </div>
+                  <div class="option">
+                    <ha-switch
+                      .checked=${this.config?.hide_sensors_when_off ?? false}
+                      .configValue=${'hide_sensors_when_off'}
+                      @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    ${localize('editor.hide_sensors_when_off')}
+                  </div>
+                `
+              : nothing}
+          `
+        )}
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.sensors_in_separate_card ?? true}
-            .configValue=${'sensors_in_separate_card'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Show Sensors in Separate Cards
-        </div>
+        <!-- Controls Section -->
+        ${this.renderSection(
+          'controls',
+          'mdi:tune',
+          'controls',
+          html`
+            <div class="option">
+              <ha-switch
+                .checked=${this.config?.show_child_lock ?? true}
+                .configValue=${'show_child_lock'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_child_lock')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.collapsible_preset_modes ?? false}
-            .configValue=${'collapsible_preset_modes'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Collapsible Preset Modes
-        </div>
+            <div class="option">
+              <ha-switch
+                .checked=${!(this.config?.collapse_controls_when_off ?? false)}
+                .configValue=${'collapse_controls_when_off'}
+                @change=${(e: Event) => {
+                  // Invert the value since the label is "Show Controls When Off"
+                  const target = e.target as HTMLInputElement;
+                  this.config = {
+                    ...this.config,
+                    collapse_controls_when_off: !target.checked,
+                  };
+                  fireEvent(this, 'config-changed', { config: this.config });
+                }}
+              >
+              </ha-switch>
+              ${localize('editor.collapse_controls_when_off')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.fill_container ?? false}
-            .configValue=${'fill_container'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Fill Container
-        </div>
+            <div class="option">
+              <ha-switch
+                aria-label=${localize(
+                  this.config?.show_preset_modes
+                    ? 'editor.show_preset_modes_aria_label_off'
+                    : 'editor.show_preset_modes_aria_label_on',
+                )}
+                .checked=${this.config?.show_preset_modes ?? true}
+                .configValue=${'show_preset_modes'}
+                @change=${this.valueChanged}
+              >
+              </ha-switch>
+              ${localize('editor.show_preset_modes')}
+            </div>
 
-        <div class="option">
-          <ha-switch
-            .checked=${this.config?.collapse_controls_when_off ?? false}
-            .configValue=${'collapse_controls_when_off'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          Collapse Controls When Off
-        </div>
-
-        ${this.config?.collapse_controls_when_off
-          ? html`
-              <div class="option" style="margin-left: 32px;">
-                <ha-switch
-                  .checked=${this.config?.hide_sensors_when_off ?? false}
-                  .configValue=${'hide_sensors_when_off'}
-                  @change=${this.valueChanged}
-                >
-                </ha-switch>
-                Hide Sensors When Off
-              </div>
-            `
-          : nothing}
+            ${this.config?.show_preset_modes && (this.config?.entity || this.config?.detected_entities?.fan)
+              ? html`
+                  <div style="margin-top: 8px;">
+                    <div style="font-weight: 500; margin-bottom: 8px; font-size: 12px; color: var(--secondary-text-color);">
+                      ${localize('editor.visible_preset_modes')}
+                    </div>
+                    ${this.renderPresetModeCheckboxes()}
+                  </div>
+                `
+              : nothing}
+          `
+        )}
       </div>
     `;
   }
