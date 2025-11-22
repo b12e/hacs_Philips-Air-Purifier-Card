@@ -23,7 +23,7 @@ export class PurifierCardEditor extends LitElement {
   @state() private devices: any[] = [];
   @state() private areas: any[] = [];
 
-  @state() private expandedSections: Set<string> = new Set(['display', 'icon', 'sensors', 'controls']);
+  @state() private expandedSections: Set<string> = new Set(['display']);
 
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
     // Ensure config is always initialized with defaults
