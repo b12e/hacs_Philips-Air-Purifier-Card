@@ -315,21 +315,12 @@ export class PurifierCardEditor extends LitElement {
       <div class="card-config">
         <!-- Device Selector -->
         <div class="option">
-          <ha-selector
+          <ha-device-picker
             .hass=${this.hass}
-            .selector=${{
-              device: {
-                filter: [
-                  {
-                    manufacturer: 'Philips'
-                  }
-                ]
-              }
-            }}
             .value=${this.config?.device_id}
             .label=${localize('editor.device')}
             @value-changed=${this.deviceChangedFromSelector}
-          ></ha-selector>
+          ></ha-device-picker>
         </div>
 
         <!-- Display Section -->
