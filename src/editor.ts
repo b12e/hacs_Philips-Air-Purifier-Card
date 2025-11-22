@@ -315,34 +315,21 @@ export class PurifierCardEditor extends LitElement {
       <div class="card-config">
         <!-- Device Selector -->
         <div class="option">
-          <ha-selector-device
+          <ha-selector
             .hass=${this.hass}
+            .selector=${{
+              device: {
+                filter: [
+                  {
+                    manufacturer: 'Philips'
+                  }
+                ]
+              }
+            }}
             .value=${this.config?.device_id}
             .label=${localize('editor.device')}
-            .deviceFilter=${(device: any) => {
-              const manufacturer = device.manufacturer?.toLowerCase() || '';
-              const model = device.model?.toUpperCase() || '';
-              const isPhilips = manufacturer.includes('philips');
-              // Check if it's one of our supported models
-              const modelBase = model.replace(/\/\d+$/, '');
-              const supportedModels = ['AC0850', 'AC0950', 'AC0951', 'AC1214', 'AC1715',
-                'AC2729', 'AC2889', 'AC2936', 'AC2939', 'AC2958', 'AC2959',
-                'AC3033', 'AC3036', 'AC3039', 'AC3055', 'AC3059',
-                'AC3210', 'AC3220', 'AC3221', 'AC3259',
-                'AC3420', 'AC3421', 'AC3737', 'AC3829', 'AC3836',
-                'AC3854', 'AC3858',
-                'AC4220', 'AC4221', 'AC4236', 'AC4550', 'AC4558',
-                'AC5659', 'AC5660',
-                'AMF765', 'AMF870',
-                'CX3120', 'CX3550', 'CX5120',
-                'HU1509', 'HU1510', 'HU5710'];
-              const isSupportedModel = supportedModels.some(sm =>
-                model.startsWith(sm) || modelBase === sm
-              );
-              return isPhilips && isSupportedModel;
-            }}
             @value-changed=${this.deviceChangedFromSelector}
-          ></ha-selector-device>
+          ></ha-selector>
         </div>
 
         <!-- Display Section -->
