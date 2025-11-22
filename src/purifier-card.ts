@@ -437,4 +437,5 @@ window.customCards.push({
   type: 'custom:philips-purifier-card',
   name: localize('common.name'),
   description: localize('common.description'),
+  preview: true,
 });
