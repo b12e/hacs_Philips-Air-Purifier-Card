@@ -361,14 +361,14 @@ export class PurifierCard extends LitElement {
     const stateText = localize(`state.${state}`) || state;
     const isOn = state === 'on';
 
-    // Determine if we should show preset mode buttons inline
-    const shouldShowInlineControls = (
+    // Determine if we should show preset mode buttons
+    const shouldShowControls = (
       this.config.show_preset_modes ||
       this.config.show_child_lock
     ) && (!this.config.collapse_controls_when_off || isOn);
 
     return html`
-      <div class="card-header">
+      <div class="state-item">
         ${this.config.show_icon
           ? html`
               <div class="icon-state ${classMap({
@@ -385,13 +385,15 @@ export class PurifierCard extends LitElement {
             ? html`<div class="state-text">${stateText}</div>`
             : nothing}
         </div>
-        <div class="header-actions">
+      </div>
+      ${shouldShowControls ? html`
+        <div class="actions">
           ${this.requestInProgress
             ? html`<ha-circular-progress size="small" indeterminate></ha-circular-progress>`
             : nothing}
-          ${shouldShowInlineControls ? this.renderInlineControls() : nothing}
+          ${this.renderInlineControls()}
         </div>
-      </div>
+      ` : nothing}
     `;
   }
 

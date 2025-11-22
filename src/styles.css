@@ -60,12 +60,26 @@ ha-card.fill-container {
   box-sizing: border-box;
 }
 
-/* Header */
-.card-header {
+/* State Item - Mushroom style */
+.state-item {
   display: flex;
   align-items: center;
   gap: var(--spacing);
   padding: var(--spacing);
+  cursor: pointer;
+}
+
+/* Actions - Mushroom style */
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--control-spacing);
+  padding-top: 0;
+  gap: var(--control-spacing);
 }
 
 .icon-state {
@@ -129,12 +143,6 @@ ha-card.fill-container {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--control-spacing);
 }
 
 /* Mushroom-style control buttons */
