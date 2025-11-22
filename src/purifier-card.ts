@@ -39,7 +39,7 @@ if (!customElements.get('ha-icon-button')) {
 }
 
 const SUPPORT_PRESET_MODE = 8;
-@customElement('purifier-card')
+@customElement('philips-purifier-card')
 export class PurifierCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
