@@ -1,0 +1,345 @@
+:host {
+  --spacing: 12px;
+  --icon-size: 42px;
+  --control-height: 42px;
+  --control-spacing: 12px;
+
+  /* Mushroom-inspired colors */
+  --primary-color: var(--state-active-color, #0066CC);
+  --disabled-color: var(--disabled-text-color);
+  --card-background: var(--ha-card-background, var(--card-background-color, white));
+  --primary-text: var(--primary-text-color);
+  --secondary-text: var(--secondary-text-color);
+  --divider-color: var(--entities-divider-color, rgba(127, 127, 127, 0.2));
+
+  display: block;
+}
+
+ha-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--ha-card-border-radius, 12px);
+  background: var(--card-background);
+  box-shadow: var(--ha-card-box-shadow, none);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+ha-card.mushroom-card {
+  padding: 0;
+}
+
+ha-card.compact {
+  padding: 8px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  padding: var(--spacing);
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing);
+}
+
+.entity-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+  flex: 1;
+  min-width: 0;
+}
+
+.icon-state {
+  flex: 0 0 var(--icon-size);
+  width: var(--icon-size);
+  height: var(--icon-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--disabled-color);
+  color: white;
+  transition: background 0.3s ease;
+  position: relative;
+}
+
+.icon-state.active {
+  background: var(--primary-color);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--primary-color);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.3);
+  }
+}
+
+.icon-state ha-icon {
+  --mdc-icon-size: 24px;
+}
+
+.info-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--primary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.state-text {
+  font-size: 14px;
+  color: var(--secondary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Preset Modes */
+.preset-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.preset-mode-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--divider-color);
+  background: transparent;
+  color: var(--primary-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.preset-mode-chip:hover {
+  background: rgba(127, 127, 127, 0.1);
+  transform: scale(1.02);
+}
+
+.preset-mode-chip.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.preset-mode-chip ha-icon {
+  --mdc-icon-size: 18px;
+}
+
+/* Sensors */
+.sensors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing);
+}
+
+.sensor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.05);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.sensor:hover {
+  background: rgba(127, 127, 127, 0.1);
+  transform: translateY(-2px);
+}
+
+.sensor-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+}
+
+.sensor-icon ha-icon {
+  --mdc-icon-size: 20px;
+}
+
+.sensor-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sensor-label {
+  font-size: 12px;
+  color: var(--secondary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sensor-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--divider-color);
+}
+
+.toolbar ha-icon-button {
+  --mdc-icon-button-size: var(--control-height);
+  --mdc-icon-size: 24px;
+  color: var(--secondary-text);
+  transition: color 0.2s ease;
+}
+
+.toolbar ha-icon-button:hover {
+  color: var(--primary-text);
+}
+
+.toolbar ha-icon-button.active {
+  color: var(--primary-color);
+}
+
+/* Unavailable state */
+.unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--secondary-text);
+  text-align: center;
+}
+
+.unavailable ha-icon {
+  --mdc-icon-size: 48px;
+  color: var(--disabled-color);
+}
+
+/* Compact view */
+ha-card.compact .card-content {
+  padding: 8px;
+  gap: 8px;
+}
+
+ha-card.compact .card-header {
+  gap: 8px;
+}
+
+ha-card.compact .icon-state {
+  --icon-size: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+ha-card.compact .name {
+  font-size: 14px;
+}
+
+ha-card.compact .state-text {
+  font-size: 12px;
+}
+
+ha-card.compact .preset-modes {
+  gap: 6px;
+}
+
+ha-card.compact .preset-mode-chip {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+ha-card.compact .sensors {
+  gap: 8px;
+}
+
+ha-card.compact .sensor {
+  padding: 8px;
+}
+
+ha-card.compact .sensor-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* Horizontal layout */
+ha-card.horizontal .card-content {
+  flex-direction: row;
+  align-items: center;
+}
+
+ha-card.horizontal .card-header {
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 150px;
+}
+
+ha-card.horizontal .preset-modes {
+  flex: 1;
+  justify-content: center;
+}
+
+ha-card.horizontal .sensors {
+  flex: 1;
+}
+
+/* Loading animation */
+ha-circular-progress {
+  width: 24px;
+  height: 24px;
+}
+
+/* Button reset */
+button {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}

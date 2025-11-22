@@ -1,0 +1,67 @@
+{
+  "common": {
+    "name": "Philips Air Purifier Card",
+    "description": "Card for controlling Philips Air Purifiers with automatic entity detection.",
+    "not_available": "Entity is not available",
+    "toggle_power": "Turn on/off"
+  },
+  "state": {
+    "on": "On",
+    "off": "Off",
+    "unavailable": "Unavailable",
+    "unknown": "Unknown"
+  },
+  "preset_mode": {
+    "auto": "Auto",
+    "silent": "Silent",
+    "sleep": "Sleep",
+    "turbo": "Turbo",
+    "speed_1": "Speed 1",
+    "speed_2": "Speed 2",
+    "speed_3": "Speed 3",
+    "allergen": "Allergen",
+    "bacteria": "Bacteria",
+    "favorite": "Favorite",
+    "fan": "Fan"
+  },
+  "error": {
+    "missing_entity": "Specifying entity is required!",
+    "missing_device_or_entity": "Please specify either a device or entity!",
+    "invalid_config": "Invalid configuration"
+  },
+  "editor": {
+    "device": "Device",
+    "entity": "Entity (Required)",
+    "detected_entities": "Detected entities",
+    "layout": "Layout",
+    "layout_vertical": "Vertical",
+    "layout_horizontal": "Horizontal",
+    "compact_view": "Compact View",
+    "compact_view_aria_label_on": "Toggle compact view on",
+    "compact_view_aria_label_off": "Toggle compact view off",
+    "show_name": "Show Name",
+    "show_name_aria_label_on": "Toggle display name on",
+    "show_name_aria_label_off": "Toggle display name off",
+    "show_state": "Show State",
+    "show_state_aria_label_on": "Toggle display state on",
+    "show_state_aria_label_off": "Toggle display state off",
+    "show_preset_modes": "Show Preset Modes",
+    "show_preset_modes_aria_label_on": "Toggle display preset modes on",
+    "show_preset_modes_aria_label_off": "Toggle display preset modes off",
+    "show_sensors": "Show Sensors",
+    "show_sensors_aria_label_on": "Toggle display sensors on",
+    "show_sensors_aria_label_off": "Toggle display sensors off",
+    "show_toolbar": "Show Toolbar",
+    "show_toolbar_aria_label_on": "Toggle display toolbar on",
+    "show_toolbar_aria_label_off": "Toggle display toolbar off"
+  },
+  "sensors": {
+    "pm25": "PM2.5",
+    "humidity": "Humidity",
+    "temperature": "Temperature",
+    "allergen_index": "Allergen Index",
+    "filter_pre": "Pre-filter",
+    "filter_hepa": "HEPA Filter",
+    "filter_carbon": "Carbon Filter"
+  }
+}
