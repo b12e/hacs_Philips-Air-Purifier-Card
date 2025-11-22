@@ -86,7 +86,10 @@ export class PurifierCard extends LitElement {
 
     // Auto-detect entities if device_id is provided and hass is available
     if (this.config.device_id && this.hass) {
-      this.detectedEntities = detectPhilipsEntities(this.hass, this.config.device_id);
+      detectPhilipsEntities(this.hass, this.config.device_id).then((detected) => {
+        this.detectedEntities = detected;
+        this.requestUpdate();
+      });
     }
   }
 
@@ -104,9 +107,11 @@ export class PurifierCard extends LitElement {
     // If hass changed and we have a device_id but no detected entities, run detection
     if (changedProps.has('hass') && this.hass && this.config?.device_id && !this.detectedEntities.fan) {
       console.log('Running entity detection for device:', this.config.device_id);
-      const detected = detectPhilipsEntities(this.hass, this.config.device_id);
-      console.log('Detected entities:', detected);
-      this.detectedEntities = detected;
+      detectPhilipsEntities(this.hass, this.config.device_id).then((detected) => {
+        console.log('Detected entities:', detected);
+        this.detectedEntities = detected;
+        this.requestUpdate();
+      });
     }
 
     return hasConfigOrEntityChanged(this, changedProps, false);

@@ -33,7 +33,7 @@ export class PurifierCardEditor extends LitElement {
 
     // Auto-detect entities if device_id is set
     if (this.config?.device_id && this.hass) {
-      const detected = detectPhilipsEntities(this.hass, this.config.device_id);
+      const detected = await detectPhilipsEntities(this.hass, this.config.device_id);
 
       // Create new config object instead of modifying frozen one
       this.config = {
@@ -55,7 +55,7 @@ export class PurifierCardEditor extends LitElement {
       const entityState = this.hass?.states[this.config.entity];
       const deviceId = entityState?.attributes.device_id;
       if (deviceId && typeof deviceId === 'string') {
-        const detected = detectPhilipsEntities(this.hass!, deviceId);
+        const detected = await detectPhilipsEntities(this.hass!, deviceId);
 
         // Create new config object instead of modifying frozen one
         this.config = {
@@ -78,7 +78,7 @@ export class PurifierCardEditor extends LitElement {
 
       // If we have a device_id in config but no detected entities, run detection
       if (this.config?.device_id && !this.config?.detected_entities?.fan) {
-        const detected = detectPhilipsEntities(this.hass, this.config.device_id);
+        const detected = await detectPhilipsEntities(this.hass, this.config.device_id);
         this.config = {
           ...this.config,
           detected_entities: detected,
@@ -302,7 +302,7 @@ export class PurifierCardEditor extends LitElement {
     }
 
     // Detect entities for this device
-    const detected = detectPhilipsEntities(this.hass, deviceId);
+    const detected = await detectPhilipsEntities(this.hass, deviceId);
 
     // Create updated config
     const updatedConfig = {

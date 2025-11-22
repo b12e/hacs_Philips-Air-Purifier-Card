@@ -2,33 +2,38 @@ import { HomeAssistant } from 'custom-card-helpers';
 import { DetectedEntities } from './types';
 
 /**
- * Get all entities for a specific device
+ * Get all entities for a specific device from the entity registry
  */
-export function getDeviceEntities(
+export async function getDeviceEntities(
   hass: HomeAssistant,
   deviceId: string,
-): string[] {
-  const entities: string[] = [];
+): Promise<string[]> {
+  try {
+    const entityRegistry: any[] = await hass.callWS({
+      type: 'config/entity_registry/list',
+    });
 
-  Object.keys(hass.states).forEach((entityId) => {
-    const state = hass.states[entityId];
-    if (state.attributes.device_id === deviceId) {
-      entities.push(entityId);
-    }
-  });
-
-  return entities;
+    return entityRegistry
+      .filter((entry) => entry.device_id === deviceId)
+      .map((entry) => entry.entity_id);
+  } catch (error) {
+    console.error('Error fetching entity registry:', error);
+    return [];
+  }
 }
 
 /**
  * Detect and categorize entities from a Philips Air Purifier device
  */
-export function detectPhilipsEntities(
+export async function detectPhilipsEntities(
   hass: HomeAssistant,
   deviceId: string,
-): DetectedEntities {
-  const entities = getDeviceEntities(hass, deviceId);
+): Promise<DetectedEntities> {
+  const entities = await getDeviceEntities(hass, deviceId);
   const detected: DetectedEntities = {};
+
+  console.log('detectPhilipsEntities - deviceId:', deviceId);
+  console.log('detectPhilipsEntities - found entities:', entities);
 
   entities.forEach((entityId) => {
     const [domain, ...nameParts] = entityId.split('.');
