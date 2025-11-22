@@ -65,7 +65,8 @@ ha-card.fill-container {
   display: flex;
   align-items: center;
   gap: var(--spacing);
-  padding: var(--spacing);
+  padding: 0 var(--spacing);
+  height: 56px;
 }
 
 /* Actions - Inline controls */
