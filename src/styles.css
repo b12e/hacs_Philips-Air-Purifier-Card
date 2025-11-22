@@ -45,7 +45,6 @@ ha-card {
   box-sizing: border-box;
   overflow: hidden;
   padding: 0;
-  border: none;
 }
 
 ha-card.mushroom-card {
@@ -70,7 +69,7 @@ ha-card.fill-container {
   align-items: center;
   gap: var(--spacing);
   padding: 0 var(--spacing) 0 8px;
-  height: 56px;
+  height: 54px; /* 54px + 2px border = 56px total */
 }
 
 /* Actions - Inline controls */
@@ -156,6 +155,7 @@ ha-card.fill-container {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .state-text {
@@ -165,6 +165,7 @@ ha-card.fill-container {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 /* Mushroom-style control buttons */
@@ -183,7 +184,7 @@ ha-card.fill-container {
   border-radius: var(--control-border-radius);
   border: none;
   background-color: var(--bg-color);
-  transition: background-color 280ms ease-in-out;
+  transition: background-color 280ms ease-in-out, transform 180ms ease-in-out;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -192,6 +193,10 @@ ha-card.fill-container {
 
 .control-button:hover:not(.active) {
   background: rgba(var(--rgb-primary-text-color), 0.1);
+}
+
+.control-button:active {
+  transform: scale(0.95);
 }
 
 .control-button.active {
@@ -246,7 +251,7 @@ ha-card.fill-container {
   border: none;
   margin: 0;
   box-sizing: border-box;
-  transition: background-color 280ms ease-in-out;
+  transition: background-color 280ms ease-in-out, transform 180ms ease-in-out;
   line-height: 0;
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
@@ -254,6 +259,10 @@ ha-card.fill-container {
 
 .mode-button:hover:not(.active) {
   background: rgba(var(--rgb-primary-text-color), 0.1);
+}
+
+.mode-button:active {
+  transform: scale(0.95);
 }
 
 .mode-button.active {
