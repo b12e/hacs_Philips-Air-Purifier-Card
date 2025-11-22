@@ -142,12 +142,9 @@ export class PurifierCardEditor extends LitElement {
     const visibleSensors = this.config?.visible_sensors || [];
 
     return html`
-      <div class="sensor-checkboxes">
-        <div style="margin-left: 16px; margin-bottom: 8px; font-size: 12px; opacity: 0.7;">
-          Visible Sensors (empty = all):
-        </div>
+      <div class="sensor-checkboxes" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px;">
         ${availableSensors.map(sensor => html`
-          <div class="option" style="margin-left: 32px;">
+          <div class="option" style="padding: 8px;">
             <ha-switch
               .checked=${visibleSensors.length === 0 || visibleSensors.includes(sensor.key)}
               @change=${(e: Event) => this.sensorVisibilityChanged(e, sensor.key)}
