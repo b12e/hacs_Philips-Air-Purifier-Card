@@ -8,7 +8,7 @@ import {
 import { PurifierCardConfig, Template } from './types';
 import localize from './localize';
 import styles from './editor.css';
-import { detectPhilipsEntities } from './utils';
+import { detectPhilipsEntities, getDevices } from './utils';
 
 type ConfigElement = HTMLInputElement & {
   configValue?: keyof PurifierCardConfig;
@@ -19,6 +19,8 @@ export class PurifierCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private config!: Partial<PurifierCardConfig>;
+
+  @state() private devices: any[] = [];
 
   @state() private expandedSections: Set<string> = new Set(['display']);
 
@@ -81,6 +83,11 @@ export class PurifierCardEditor extends LitElement {
   protected async updated(changedProps: Map<string, any>) {
     super.updated(changedProps);
 
+    // Load devices when hass becomes available
+    if (changedProps.has('hass') && this.hass && this.devices.length === 0) {
+      await this.loadDevices();
+    }
+
     // If we have a device_id in config but no detected entities, run detection
     if (changedProps.has('hass') && this.hass && this.config?.device_id && !this.config?.detected_entities?.fan) {
       const detected = await detectPhilipsEntities(this.hass, this.config.device_id);
@@ -90,6 +97,25 @@ export class PurifierCardEditor extends LitElement {
         entity: detected.fan,
       };
     }
+  }
+
+  private async loadDevices() {
+    if (!this.hass) return;
+
+    try {
+      const allDevices = await getDevices(this.hass);
+      this.devices = allDevices.filter(this.philipsDeviceFilter);
+    } catch (error) {
+      console.error('Error loading devices:', error);
+      this.devices = [];
+    }
+  }
+
+  private getFilteredDevices() {
+    return this.devices.map((device) => ({
+      id: device.id,
+      name: `${device.name_by_user || device.name} (${device.model})`
+    }));
   }
 
   private toggleSection(sectionId: string): void {
@@ -342,13 +368,15 @@ export class PurifierCardEditor extends LitElement {
       <div class="card-config">
         <!-- Device Selector -->
         <div class="option">
-          <ha-device-picker
+          <ha-combo-box
             .hass=${this.hass}
-            .value=${this.config?.device_id}
+            .value=${this.config?.device_id || ''}
             .label=${localize('editor.device')}
-            .deviceFilter=${this.philipsDeviceFilter}
+            .items=${this.getFilteredDevices()}
+            item-value-path="id"
+            item-label-path="name"
             @value-changed=${this.deviceChangedFromSelector}
-          ></ha-device-picker>
+          ></ha-combo-box>
         </div>
 
         <!-- Display Section -->
