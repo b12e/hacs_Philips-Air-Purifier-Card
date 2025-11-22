@@ -170,21 +170,6 @@ export class PurifierCardEditor extends LitElement {
           : nothing}
 
         <div class="option">
-          <ha-select
-            .label=${localize('editor.layout')}
-            @selected=${this.valueChanged}
-            .configValue=${'layout'}
-            .value=${this.config?.layout || 'vertical'}
-            @closed=${(e: PointerEvent) => e.stopPropagation()}
-            fixedMenuPosition
-            naturalMenuWidth
-          >
-            <mwc-list-item value="vertical">${localize('editor.layout_vertical')}</mwc-list-item>
-            <mwc-list-item value="horizontal">${localize('editor.layout_horizontal')}</mwc-list-item>
-          </ha-select>
-        </div>
-
-        <div class="option">
           <ha-switch
             aria-label=${localize(
               this.config?.show_name
@@ -325,23 +310,29 @@ export class PurifierCardEditor extends LitElement {
       return;
     }
     const target = event.target as ConfigElement;
-    if (
-      !target.configValue ||
-      this.config[target.configValue] === target?.value
-    ) {
+
+    if (!target.configValue) {
       return;
     }
-    if (target.configValue) {
-      if (target.value === '') {
-        delete this.config[target.configValue];
-      } else {
-        this.config = {
-          ...this.config,
-          [target.configValue]:
-            target.checked !== undefined ? target.checked : target.value,
-        };
-      }
+
+    // Get the new value (either checked state for switches or value for selects)
+    const newValue = target.checked !== undefined ? target.checked : target.value;
+
+    // Don't update if the value hasn't changed
+    if (this.config[target.configValue] === newValue) {
+      return;
     }
+
+    // Update config
+    if (target.value === '' && target.checked === undefined) {
+      delete this.config[target.configValue];
+    } else {
+      this.config = {
+        ...this.config,
+        [target.configValue]: newValue,
+      };
+    }
+
     fireEvent(this, 'config-changed', { config: this.config });
   }
 
