@@ -92,9 +92,7 @@ export class PurifierCardEditor extends LitElement {
     if (!this.hass) return;
 
     const allDevices = await getDevices(this.hass);
-    console.log('All devices:', allDevices.length);
     this.devices = filterPhilipsDevices(allDevices);
-    console.log('Filtered Philips devices:', this.devices.length, this.devices);
 
     // Load areas
     try {

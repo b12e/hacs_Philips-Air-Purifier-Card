@@ -32,9 +32,6 @@ export async function detectPhilipsEntities(
   const entities = await getDeviceEntities(hass, deviceId);
   const detected: DetectedEntities = {};
 
-  console.log('detectPhilipsEntities - deviceId:', deviceId);
-  console.log('detectPhilipsEntities - found entities:', entities);
-
   entities.forEach((entityId) => {
     const [domain, ...nameParts] = entityId.split('.');
     const name = nameParts.join('.').toLowerCase();
@@ -118,17 +115,6 @@ export function filterPhilipsDevices(devices: any[]): any[] {
   return devices.filter((device) => {
     const manufacturer = device.manufacturer?.toLowerCase() || '';
     const model = device.model?.toUpperCase() || '';
-    const name = device.name_by_user?.toLowerCase() || device.name?.toLowerCase() || '';
-
-    // Debug logging for first few devices
-    if (devices.indexOf(device) < 5) {
-      console.log('Device:', {
-        name: device.name_by_user || device.name,
-        manufacturer: device.manufacturer,
-        model: device.model,
-        id: device.id
-      });
-    }
 
     // Match Philips manufacturer AND model is in supported list
     const isPhilipsManufacturer = manufacturer.includes('philips');
