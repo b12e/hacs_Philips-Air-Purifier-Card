@@ -39,11 +39,19 @@ export class PurifierCardEditor extends LitElement {
     // Auto-detect entities if device_id is set
     if (this.config.device_id && this.hass) {
       const detected = detectPhilipsEntities(this.hass, this.config.device_id);
-      this.config.detected_entities = detected;
+
+      // Create new config object instead of modifying frozen one
+      this.config = {
+        ...this.config,
+        detected_entities: detected,
+      };
 
       // Set the fan entity as the primary entity
       if (detected.fan && !this.config.entity) {
-        this.config.entity = detected.fan;
+        this.config = {
+          ...this.config,
+          entity: detected.fan,
+        };
       }
     }
 
@@ -52,9 +60,14 @@ export class PurifierCardEditor extends LitElement {
       const entityState = this.hass?.states[this.config.entity];
       const deviceId = entityState?.attributes.device_id;
       if (deviceId && typeof deviceId === 'string') {
-        this.config.device_id = deviceId;
         const detected = detectPhilipsEntities(this.hass!, deviceId);
-        this.config.detected_entities = detected;
+
+        // Create new config object instead of modifying frozen one
+        this.config = {
+          ...this.config,
+          device_id: deviceId,
+          detected_entities: detected,
+        };
       }
     }
 

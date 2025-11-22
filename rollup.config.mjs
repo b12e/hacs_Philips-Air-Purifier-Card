@@ -55,7 +55,12 @@ const plugins = [
     babelHelpers: 'runtime',
     exclude: 'node_modules/**',
   }),
-  IS_DEV && serve(serverOptions),
+  IS_DEV && serve({
+    ...serverOptions,
+    // Fix for "object is not extensible" error
+    open: false,
+    verbose: true,
+  }),
   !IS_DEV && minifyLiterals(),
   !IS_DEV &&
     terser({
@@ -63,7 +68,7 @@ const plugins = [
         comments: false,
       },
     }),
-];
+].filter(Boolean);
 
 export default {
   input: 'src/purifier-card.ts',

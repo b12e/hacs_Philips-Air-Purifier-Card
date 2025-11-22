@@ -185,7 +185,7 @@ export class PurifierCard extends LitElement {
         ${preset_modes.map(
           (mode) => html`
             <button
-              class="preset-mode-chip ${classMap({
+              class="preset-mode-button ${classMap({
                 active: mode === preset_mode,
               })}"
               @click=${() => this.handlePresetMode(mode)}
