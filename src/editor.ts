@@ -126,7 +126,7 @@ export class PurifierCardEditor extends LitElement {
   }
 
   protected render(): Template {
-    if (!this.hass) {
+    if (!this.hass || !this.config) {
       return nothing;
     }
 
