@@ -8,9 +8,9 @@ export default function buildConfig(
     throw new Error(localize('error.invalid_config'));
   }
 
-  if (!config.device_id && !config.entity) {
-    throw new Error(localize('error.missing_device_or_entity'));
-  }
+  // Note: We don't throw an error if both device_id and entity are missing
+  // to allow the card picker preview to work. The error will be shown
+  // in the card UI itself when trying to render without an entity.
 
   return {
     type: 'custom:philips-purifier-card',

@@ -64,7 +64,7 @@ export class PurifierCard extends LitElement {
 
     return {
       type: 'custom:philips-purifier-card',
-      entity: purifierEntity ?? '',
+      entity: purifierEntity || undefined,
       show_name: true,
       show_state: true,
       show_preset_modes: true,
