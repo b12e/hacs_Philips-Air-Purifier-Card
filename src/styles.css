@@ -77,6 +77,10 @@ ha-card.fill-container {
   min-width: 0;
 }
 
+.entity-info.clickable {
+  cursor: pointer;
+}
+
 .icon-state {
   flex: 0 0 var(--icon-size);
   width: var(--icon-size);
@@ -94,16 +98,6 @@ ha-card.fill-container {
 .icon-state.active {
   background: rgba(var(--rgb-state-fan), 0.2);
   color: rgb(var(--rgb-state-fan));
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(var(--rgb-state-fan), 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(var(--rgb-state-fan), 0);
-  }
 }
 
 .icon-state ha-icon {
@@ -142,37 +136,31 @@ ha-card.fill-container {
   gap: 4px;
 }
 
-/* Preset Modes - Mushroom Button Group Style */
+/* Preset Modes - Mushroom Button Style */
 .preset-modes {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: var(--control-spacing);
   padding: 4px 0;
 }
 
 .preset-mode-button {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  gap: 4px;
-  flex-basis: calc(var(--control-height) * var(--control-button-ratio));
-  flex-grow: 0;
-  flex-shrink: 1;
   height: var(--control-height);
-  min-width: calc(var(--control-height) * var(--control-button-ratio));
-  padding: 0 12px;
+  width: calc(var(--control-height) * var(--control-button-ratio));
+  flex: none;
   border-radius: var(--control-border-radius);
   background: rgba(var(--rgb-primary-text-color), 0.05);
   border: none;
-  color: var(--primary-text);
-  font-size: var(--card-secondary-font-size);
-  font-weight: var(--card-primary-font-weight);
-  cursor: pointer;
-  transition: background-color 280ms ease-in-out, color 280ms ease-in-out;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  line-height: 1;
+  transition: background-color 280ms ease-in-out;
+  line-height: 0;
 }
 
 .preset-mode-button:hover:not(.active) {
@@ -181,17 +169,16 @@ ha-card.fill-container {
 
 .preset-mode-button.active {
   background: rgba(var(--rgb-state-fan), 0.2);
-  color: rgb(var(--rgb-state-fan));
 }
 
 .preset-mode-button ha-icon {
   --mdc-icon-size: var(--control-icon-size);
-  line-height: 0;
+  color: var(--primary-text);
+  pointer-events: none;
 }
 
-.preset-mode-button span {
-  line-height: 1.2;
-  white-space: nowrap;
+.preset-mode-button.active ha-icon {
+  color: rgb(var(--rgb-state-fan));
 }
 
 /* Sensors */

@@ -195,12 +195,23 @@ export class PurifierCard extends LitElement {
                 active: mode === preset_mode,
               })}"
               @click=${() => this.handlePresetMode(mode)}
+              title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
             >
               <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
-              <span>${localize(`preset_mode.${mode.toLowerCase()}`) || mode}</span>
             </button>
           `,
         )}
+        ${this.config.show_child_lock && this.detectedEntities.child_lock
+          ? html`
+              <button
+                class="preset-mode-button"
+                @click=${() => this.callService('switch.toggle', {}, undefined, false)}
+                title="Child Lock"
+              >
+                <ha-icon icon="pap:child_lock_button"></ha-icon>
+              </button>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -322,7 +333,10 @@ export class PurifierCard extends LitElement {
 
     return html`
       <div class="card-header">
-        <div class="entity-info">
+        <div
+          class="entity-info ${classMap({ clickable: this.config.show_power_button ?? false })}"
+          @click=${this.config.show_power_button ? () => this.handleToggle() : nothing}
+        >
           <div class="icon-state ${classMap({ active: isOn })}">
             <ha-icon icon="pap:power_button"></ha-icon>
           </div>
@@ -337,49 +351,11 @@ export class PurifierCard extends LitElement {
           ${this.requestInProgress
             ? html`<ha-circular-progress size="small" indeterminate></ha-circular-progress>`
             : nothing}
-          <ha-icon-button @click=${() => this.handleMore()}>
-            <ha-icon icon="mdi:dots-vertical"></ha-icon>
-          </ha-icon-button>
         </div>
       </div>
     `;
   }
 
-  private renderToolbar(): Template {
-    if (!this.config.show_toolbar || !this.entity) {
-      return nothing;
-    }
-
-    // Hide toolbar if collapsible_controls is enabled and device is off
-    if (this.config.collapsible_controls && this.entity.state === 'off') {
-      return nothing;
-    }
-
-    const { state } = this.entity;
-    const isOn = state === 'on';
-
-    return html`
-      <div class="toolbar">
-        <ha-icon-button
-          class="${classMap({ active: isOn })}"
-          @click=${() => this.handleToggle()}
-        >
-          <ha-icon icon="pap:power_button"></ha-icon>
-        </ha-icon-button>
-
-        ${this.detectedEntities.child_lock
-          ? html`
-              <ha-icon-button
-                @click=${() =>
-                  this.callService('switch.toggle', {}, undefined, false)}
-              >
-                <ha-icon icon="pap:child_lock_button"></ha-icon>
-              </ha-icon-button>
-            `
-          : nothing}
-      </div>
-    `;
-  }
 
   private renderUnavailable(): Template {
     return html`
@@ -419,7 +395,6 @@ export class PurifierCard extends LitElement {
           ${this.renderHeader()}
           ${this.renderPresetModes()}
           ${this.renderSensors()}
-          ${this.renderToolbar()}
         </div>
       </ha-card>
     `;

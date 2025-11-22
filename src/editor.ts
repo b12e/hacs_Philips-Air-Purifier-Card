@@ -78,6 +78,7 @@ export class PurifierCardEditor extends LitElement {
 
     const allDevices = await getDevices(this.hass);
     this.devices = filterPhilipsDevices(allDevices);
+    this.requestUpdate();
   }
 
   protected render(): Template {
@@ -219,6 +220,26 @@ export class PurifierCardEditor extends LitElement {
           >
           </ha-switch>
           ${localize('editor.show_toolbar')}
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config.show_power_button ?? true}
+            .configValue=${'show_power_button'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Show Power Button (Click icon to toggle)
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config.show_child_lock ?? true}
+            .configValue=${'show_child_lock'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Show Child Lock Button
         </div>
 
         <div class="option">

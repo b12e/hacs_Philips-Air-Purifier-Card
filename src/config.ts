@@ -22,6 +22,8 @@ export default function buildConfig(
     show_preset_modes: config.show_preset_modes ?? true,
     show_sensors: config.show_sensors ?? true,
     show_toolbar: config.show_toolbar ?? true,
+    show_power_button: config.show_power_button ?? (config.show_toolbar ?? true),
+    show_child_lock: config.show_child_lock ?? true,
     compact_view: config.compact_view ?? false,
     layout: config.layout ?? 'vertical',
     collapsible_controls: config.collapsible_controls ?? false,

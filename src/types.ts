@@ -49,7 +49,9 @@ export interface PurifierCardConfig {
   show_state: boolean;
   show_preset_modes: boolean;
   show_sensors: boolean;
-  show_toolbar: boolean;
+  show_toolbar: boolean; // Legacy - now controls power button visibility
+  show_power_button?: boolean;
+  show_child_lock?: boolean;
   compact_view: boolean;
   layout: 'vertical' | 'horizontal';
   collapsible_controls?: boolean; // Hide controls when device is off
