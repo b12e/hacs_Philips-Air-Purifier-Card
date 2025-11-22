@@ -160,21 +160,6 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.config.compact_view
-                ? 'editor.compact_view_aria_label_off'
-                : 'editor.compact_view_aria_label_on',
-            )}
-            .checked=${this.config.compact_view ?? false}
-            .configValue=${'compact_view'}
-            @change=${this.valueChanged}
-          >
-          </ha-switch>
-          ${localize('editor.compact_view')}
-        </div>
-
-        <div class="option">
-          <ha-switch
-            aria-label=${localize(
               this.config.show_name
                 ? 'editor.show_name_aria_label_off'
                 : 'editor.show_name_aria_label_on',
@@ -305,14 +290,22 @@ export class PurifierCardEditor extends LitElement {
     // Detect entities for this device
     const detected = detectPhilipsEntities(this.hass, deviceId);
 
-    this.config = {
+    // Create updated config
+    const updatedConfig = {
       ...this.config,
+      type: 'custom:philips-purifier-card',
       device_id: deviceId,
       entity: detected.fan,
       detected_entities: detected,
     };
 
-    fireEvent(this, 'config-changed', { config: this.config });
+    this.config = updatedConfig;
+
+    // Fire config-changed event to update the preview
+    fireEvent(this, 'config-changed', { config: updatedConfig });
+
+    // Request update to refresh the UI
+    this.requestUpdate();
   }
 
   private valueChanged(event: Event): void {
