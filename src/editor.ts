@@ -23,7 +23,7 @@ export class PurifierCardEditor extends LitElement {
   @state() private devices: any[] = [];
 
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
-    this.config = config;
+    this.config = config || {};
 
     // Load devices
     if (this.hass) {
@@ -31,7 +31,7 @@ export class PurifierCardEditor extends LitElement {
     }
 
     // Auto-detect entities if device_id is set
-    if (this.config.device_id && this.hass) {
+    if (this.config?.device_id && this.hass) {
       const detected = detectPhilipsEntities(this.hass, this.config.device_id);
 
       // Create new config object instead of modifying frozen one
@@ -50,7 +50,7 @@ export class PurifierCardEditor extends LitElement {
     }
 
     // Backward compatibility: if only entity is set, use it
-    if (!this.config.device_id && this.config.entity) {
+    if (!this.config?.device_id && this.config?.entity) {
       const entityState = this.hass?.states[this.config.entity];
       const deviceId = entityState?.attributes.device_id;
       if (deviceId && typeof deviceId === 'string') {

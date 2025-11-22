@@ -110,17 +110,17 @@ export function filterPhilipsDevices(devices: any[]): any[] {
       });
     }
 
-    // Match Philips devices or devices with philips/purifier in name
-    const isPhilips = manufacturer.includes('philips') ||
-                      name.includes('philips') ||
-                      model.includes('philips');
+    // Match Philips Air Purifiers:
+    // 1. Manufacturer is Philips AND model starts with AC (Philips Air Purifier models)
+    // 2. OR name contains philips/air/purifier keywords
+    const isPhilipsManufacturer = manufacturer.includes('philips');
+    const isAirPurifierModel = model.match(/^ac\d{4}/) !== null; // Matches AC3033, AC4221, etc.
 
-    const isPurifier = model.includes('air') ||
-                       model.includes('purifier') ||
-                       name.includes('air') ||
-                       name.includes('purifier') ||
-                       name.includes('luchtreiniger'); // Dutch for air purifier
+    const hasKeywords = name.includes('philips') ||
+                        name.includes('air') ||
+                        name.includes('purifier') ||
+                        name.includes('luchtreiniger'); // Dutch for air purifier
 
-    return isPhilips || isPurifier;
+    return (isPhilipsManufacturer && isAirPurifierModel) || hasKeywords;
   });
 }
