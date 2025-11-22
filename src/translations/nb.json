@@ -12,6 +12,14 @@
   "preset_mode": {
     "auto": "Auto",
     "silent": "Stille",
+    "sleep": "Søvn",
+    "turbo": "Turbo",
+    "speed_1": "Hastighet 1",
+    "speed_2": "Hastighet 2",
+    "speed_3": "Hastighet 3",
+    "allergen": "Allergen",
+    "allergy_sleep": "Allergi Søvn",
+    "bacteria": "Bakterier",
     "favorite": "Favoritt",
     "fan": "Vifte"
   },

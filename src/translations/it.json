@@ -12,6 +12,14 @@
   "preset_mode": {
     "auto": "Auto",
     "silent": "Silenzioso",
+    "sleep": "Sonno",
+    "turbo": "Turbo",
+    "speed_1": "Velocità 1",
+    "speed_2": "Velocità 2",
+    "speed_3": "Velocità 3",
+    "allergen": "Allergeni",
+    "allergy_sleep": "Allergia Sonno",
+    "bacteria": "Batteri",
     "favorite": "Preferito",
     "fan": "Ventola"
   },

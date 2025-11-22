@@ -12,6 +12,14 @@
   "preset_mode": {
     "auto": "Otomatik",
     "silent": "Sessiz",
+    "sleep": "Uyku",
+    "turbo": "Turbo",
+    "speed_1": "Hız 1",
+    "speed_2": "Hız 2",
+    "speed_3": "Hız 3",
+    "allergen": "Alerjen",
+    "allergy_sleep": "Alerji Uyku",
+    "bacteria": "Bakteri",
     "favorite": "Favori",
     "fan": "Fan"
   },

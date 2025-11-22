@@ -10,10 +10,18 @@
     "off": "Desligado"
   },
   "preset_mode": {
-    "Auto": "Automático",
-    "Silent": "Silencioso",
-    "Favorite": "Favorito",
-    "Fan": "Ventilador"
+    "auto": "Automático",
+    "silent": "Silencioso",
+    "sleep": "Dormir",
+    "turbo": "Turbo",
+    "speed_1": "Velocidade 1",
+    "speed_2": "Velocidade 2",
+    "speed_3": "Velocidade 3",
+    "allergen": "Alérgeno",
+    "allergy_sleep": "Alergia Dormir",
+    "bacteria": "Bactérias",
+    "favorite": "Favorito",
+    "fan": "Ventilador"
   },
   "error": {
     "missing_entity": "A especificação da entidade é necessária!"

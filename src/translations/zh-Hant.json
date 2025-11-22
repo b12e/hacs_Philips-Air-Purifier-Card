@@ -12,6 +12,14 @@
   "preset_mode": {
     "auto": "自動",
     "silent": "靜音",
+    "sleep": "睡眠",
+    "turbo": "渦輪",
+    "speed_1": "速度 1",
+    "speed_2": "速度 2",
+    "speed_3": "速度 3",
+    "allergen": "過敏原",
+    "allergy_sleep": "過敏睡眠",
+    "bacteria": "細菌",
     "favorite": "最愛",
     "fan": "送風"
   },

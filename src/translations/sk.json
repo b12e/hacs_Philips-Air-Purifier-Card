@@ -12,6 +12,14 @@
   "preset_mode": {
     "auto": "Auto",
     "silent": "Tichý",
+    "sleep": "Spánok",
+    "turbo": "Turbo",
+    "speed_1": "Rýchlosť 1",
+    "speed_2": "Rýchlosť 2",
+    "speed_3": "Rýchlosť 3",
+    "allergen": "Alergén",
+    "allergy_sleep": "Alergia Spánok",
+    "bacteria": "Baktérie",
     "favorite": "Obľúbené",
     "fan": "Ventilátor"
   },

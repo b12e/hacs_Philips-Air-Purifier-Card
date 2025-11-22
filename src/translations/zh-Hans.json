@@ -11,7 +11,15 @@
   },
   "preset_mode": {
     "auto": "自动",
-    "silent": "睡眠",
+    "silent": "静音",
+    "sleep": "睡眠",
+    "turbo": "涡轮",
+    "speed_1": "速度 1",
+    "speed_2": "速度 2",
+    "speed_3": "速度 3",
+    "allergen": "过敏原",
+    "allergy_sleep": "过敏睡眠",
+    "bacteria": "细菌",
     "favorite": "最爱",
     "fan": "风扇"
   },
