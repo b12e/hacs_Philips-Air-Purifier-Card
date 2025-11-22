@@ -184,93 +184,6 @@ export class PurifierCard extends LitElement {
     this._showPresetModes = !this._showPresetModes;
   }
 
-  private renderPresetModes(): Template {
-    if (!this.entity) {
-      return nothing;
-    }
-
-    if (this.entity.state === 'off') {
-      return nothing;
-    }
-
-    const {
-      attributes: { preset_mode, preset_modes, supported_features = 0 },
-    } = this.entity;
-
-    const hasPresetModes = this.config.show_preset_modes &&
-      preset_mode &&
-      preset_modes &&
-      (supported_features & SUPPORT_PRESET_MODE);
-
-    // Filter visible preset modes
-    let visibleModes: string[] = [];
-    if (hasPresetModes) {
-      visibleModes = this.config.visible_preset_modes && this.config.visible_preset_modes.length > 0
-        ? preset_modes!.filter((mode) => this.config.visible_preset_modes!.includes(mode.toLowerCase()))
-        : preset_modes!;
-    }
-
-    // If no preset modes and no child lock, return nothing
-    if (visibleModes.length === 0 && !this.config.show_child_lock) {
-      return nothing;
-    }
-
-    // If collapsible and not expanded, show button to expand
-    if (hasPresetModes && this.config.collapsible_preset_modes && !this._showPresetModes) {
-      return html`
-        <div class="modes-container">
-          <button
-            class="mode-button"
-            @click=${this.handlePresetModesToggle}
-          >
-            <ha-icon icon="pap:${this.getPresetIcon(preset_mode!)}"></ha-icon>
-            <span class="mode-label">${localize(`preset_mode.${preset_mode!.toLowerCase()}`) || preset_mode}</span>
-          </button>
-          ${this.renderChildLockButton()}
-        </div>
-      `;
-    }
-
-    // Show all modes as chips (Mushroom Climate style) plus child lock
-    return html`
-      <div class="modes-container">
-        ${visibleModes.map(
-          (mode) => html`
-            <button
-              class="mode-button ${classMap({
-                active: mode === preset_mode,
-              })}"
-              @click=${() => this.handlePresetMode(mode)}
-            >
-              <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
-              <span class="mode-label">${localize(`preset_mode.${mode.toLowerCase()}`) || mode}</span>
-            </button>
-          `,
-        )}
-        ${this.renderChildLockButton()}
-      </div>
-    `;
-  }
-
-  private renderChildLockButton(): Template {
-    if (!this.config.show_child_lock || !this.detectedEntities.child_lock) {
-      return nothing;
-    }
-
-    const childLockState = this.hass.states[this.detectedEntities.child_lock];
-    const isLocked = childLockState?.state === 'on';
-
-    return html`
-      <button
-        class="mode-button child-lock ${classMap({ active: isLocked })}"
-        @click=${() => this.callService('switch.toggle', { entity_id: this.detectedEntities.child_lock }, undefined, false)}
-        title="Child Lock"
-      >
-        <ha-icon icon="pap:child_lock_button"></ha-icon>
-      </button>
-    `;
-  }
-
   private getPresetIcon(mode: string): string {
     const iconMap: Record<string, string> = {
       auto: 'auto_mode',
@@ -432,6 +345,12 @@ export class PurifierCard extends LitElement {
     const stateText = localize(`state.${state}`) || state;
     const isOn = state === 'on';
 
+    // Determine if we should show preset mode buttons inline
+    const shouldShowInlineControls = isOn && (
+      this.config.show_preset_modes ||
+      this.config.show_child_lock
+    );
+
     return html`
       <div class="card-header">
         <div class="icon-state ${classMap({ active: isOn })}" @click=${() => this.handleToggle()}>
@@ -447,8 +366,81 @@ export class PurifierCard extends LitElement {
           ${this.requestInProgress
             ? html`<ha-circular-progress size="small" indeterminate></ha-circular-progress>`
             : nothing}
+          ${shouldShowInlineControls ? this.renderInlineControls() : nothing}
         </div>
       </div>
+    `;
+  }
+
+  private renderInlineControls(): Template {
+    if (!this.entity) return nothing;
+
+    const {
+      attributes: { preset_mode, preset_modes, supported_features = 0 },
+    } = this.entity;
+
+    const hasPresetModes = this.config.show_preset_modes &&
+      preset_mode &&
+      preset_modes &&
+      (supported_features & SUPPORT_PRESET_MODE);
+
+    // If collapsible and not expanded, show just one button
+    if (hasPresetModes && this.config.collapsible_preset_modes && !this._showPresetModes) {
+      return html`
+        <button
+          class="control-button"
+          @click=${this.handlePresetModesToggle}
+          title="${localize(`preset_mode.${preset_mode!.toLowerCase()}`) || preset_mode}"
+        >
+          <ha-icon icon="pap:${this.getPresetIcon(preset_mode!)}"></ha-icon>
+        </button>
+        ${this.renderChildLockInlineButton()}
+      `;
+    }
+
+    // Filter visible preset modes
+    let visibleModes: string[] = [];
+    if (hasPresetModes) {
+      visibleModes = this.config.visible_preset_modes && this.config.visible_preset_modes.length > 0
+        ? preset_modes!.filter((mode) => this.config.visible_preset_modes!.includes(mode.toLowerCase()))
+        : preset_modes!;
+    }
+
+    // Show all visible modes as inline buttons
+    return html`
+      ${visibleModes.map(
+        (mode) => html`
+          <button
+            class="control-button ${classMap({
+              active: mode === preset_mode,
+            })}"
+            @click=${() => this.handlePresetMode(mode)}
+            title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
+          >
+            <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
+          </button>
+        `,
+      )}
+      ${this.renderChildLockInlineButton()}
+    `;
+  }
+
+  private renderChildLockInlineButton(): Template {
+    if (!this.config.show_child_lock || !this.detectedEntities.child_lock) {
+      return nothing;
+    }
+
+    const childLockState = this.hass.states[this.detectedEntities.child_lock];
+    const isLocked = childLockState?.state === 'on';
+
+    return html`
+      <button
+        class="control-button ${classMap({ active: isLocked })}"
+        @click=${() => this.callService('switch.toggle', { entity_id: this.detectedEntities.child_lock }, undefined, false)}
+        title="Child Lock"
+      >
+        <ha-icon icon="pap:child_lock_button"></ha-icon>
+      </button>
     `;
   }
 
@@ -490,7 +482,6 @@ export class PurifierCard extends LitElement {
           })}">
             <div class="card-content">
               ${this.renderHeader()}
-              ${this.renderPresetModes()}
             </div>
           </ha-card>
           ${this.renderSeparateSensorCards()}
@@ -505,7 +496,6 @@ export class PurifierCard extends LitElement {
       })}">
         <div class="card-content">
           ${this.renderHeader()}
-          ${this.renderPresetModes()}
           ${this.renderSensors()}
         </div>
       </ha-card>

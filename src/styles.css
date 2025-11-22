@@ -6,6 +6,7 @@
   --control-height: 42px;
   --control-border-radius: 12px;
   --control-spacing: 8px;
+  --control-button-ratio: 1;
 
   /* Mushroom-inspired RGB color variables */
   --rgb-state-fan: var(--rgb-cyan, 0, 188, 212);
@@ -120,7 +121,48 @@ ha-card.fill-container {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--control-spacing);
+}
+
+/* Mushroom-style control buttons */
+.control-button {
+  --icon-color: var(--primary-text-color);
+  --icon-color-disabled: rgb(var(--rgb-disabled));
+  --bg-color: rgba(var(--rgb-primary-text-color), 0.05);
+  --bg-color-active: rgba(var(--rgb-state-fan), 0.2);
+
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--control-height) * var(--control-button-ratio));
+  height: var(--control-height);
+  border-radius: var(--control-border-radius);
+  border: none;
+  background-color: var(--bg-color);
+  transition: background-color 280ms ease-in-out;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 0;
+}
+
+.control-button:hover:not(.active) {
+  background: rgba(var(--rgb-primary-text-color), 0.1);
+}
+
+.control-button.active {
+  background-color: var(--bg-color-active);
+}
+
+.control-button ha-icon {
+  --mdc-icon-size: 20px;
+  color: var(--icon-color);
+  pointer-events: none;
+}
+
+.control-button.active ha-icon {
+  color: rgb(var(--rgb-state-fan));
 }
 
 /* Modes Container - Mushroom Climate Style */

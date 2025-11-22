@@ -117,7 +117,8 @@ export class PurifierCardEditor extends LitElement {
       this.areas = [];
     }
 
-    // Don't call requestUpdate() here to avoid resetting the dropdown
+    // Request update to refresh the device dropdown with loaded devices
+    this.requestUpdate();
   }
 
   private getAreaName(areaId: string): string {
