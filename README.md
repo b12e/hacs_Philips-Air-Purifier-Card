@@ -43,24 +43,36 @@ This card requires the [Philips AirPurifier CoAP integration](https://github.com
 |------|------|---------|-------------|
 | `type` | string | **Required** | `custom:philips-purifier-card` |
 | `device_id` | string | Optional | Device ID for auto-detection (recommended) |
-| `entity` | string | Optional | Fan entity ID (legacy, backward compatible) |
-| **Display Options** ||||
+
+
+#### Display Options
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
 | `name` | string | Auto | Custom name to display (overrides device name) |
 | `show_name` | boolean | `true` | Show device name |
 | `show_state` | boolean | `true` | Show on/off state below name |
 | `show_icon` | boolean | `true` | Show power button/icon |
 | `icon_animation` | boolean | `true` | Animate icon when device is on |
 | `fill_container` | boolean | `false` | Stretch card to fill container |
-| **Preset Modes** ||||
+
+#### Preset Modes
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
 | `show_preset_modes` | boolean | `true` | Show preset mode control chips |
 | `collapsible_preset_modes` | boolean | `false` | Show preset modes behind a toggle button |
 | `visible_preset_modes` | array | All | Array of mode keys to show (e.g., `['auto', 'sleep', 'turbo']`). Empty = show all |
-| **Sensors** ||||
+
+#### Sensors
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
 | `show_sensors` | boolean | `true` | Show sensor grid (PM2.5, IAI, humidity, temp) |
 | `visible_sensors` | array | All | Array of sensors to show: `['pm25', 'iai', 'humidity', 'temperature']`. Empty = show all |
 | `sensors_in_separate_card` | boolean | `true` | Show sensors in separate card below main card |
 | `hide_sensors_when_off` | boolean | `false` | Hide sensors when device is off |
-| **Controls** ||||
+
+#### Controls
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
 | `show_child_lock` | boolean | `true` | Show child lock control button |
 | `collapse_controls_when_off` | boolean | `false` | Hide all controls when device is off |
 
