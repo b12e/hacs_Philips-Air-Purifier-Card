@@ -63,10 +63,6 @@ This card requires the [Philips AirPurifier CoAP integration](https://github.com
 | **Controls** ||||
 | `show_child_lock` | boolean | `true` | Show child lock control button |
 | `collapse_controls_when_off` | boolean | `false` | Hide all controls when device is off |
-| **Legacy Options** ||||
-| `show_toolbar` | boolean | `true` | *Deprecated* - Use `show_child_lock` instead |
-| `compact_view` | boolean | `false` | *Deprecated* - No longer used |
-| `layout` | string | `vertical` | *Deprecated* - Use `fill_container` instead |
 
 ## Supported languages
 
