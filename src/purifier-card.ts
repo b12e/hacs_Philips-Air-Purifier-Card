@@ -385,15 +385,15 @@ export class PurifierCard extends LitElement {
             ? html`<div class="state-text">${stateText}</div>`
             : nothing}
         </div>
+        ${shouldShowControls ? html`
+          <div class="actions">
+            ${this.requestInProgress
+              ? html`<ha-circular-progress size="small" indeterminate></ha-circular-progress>`
+              : nothing}
+            ${this.renderInlineControls()}
+          </div>
+        ` : nothing}
       </div>
-      ${shouldShowControls ? html`
-        <div class="actions">
-          ${this.requestInProgress
-            ? html`<ha-circular-progress size="small" indeterminate></ha-circular-progress>`
-            : nothing}
-          ${this.renderInlineControls()}
-        </div>
-      ` : nothing}
     `;
   }
 

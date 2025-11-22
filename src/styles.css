@@ -69,17 +69,13 @@ ha-card.fill-container {
   cursor: pointer;
 }
 
-/* Actions - Mushroom style */
+/* Actions - Inline controls */
 .actions {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: var(--control-spacing);
-  padding-top: 0;
   gap: var(--control-spacing);
+  margin-left: auto;
 }
 
 .icon-state {
