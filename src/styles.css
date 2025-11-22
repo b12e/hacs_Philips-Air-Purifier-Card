@@ -189,9 +189,9 @@ ha-card.fill-container {
 .preset-modes-container {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: calc(var(--control-border-radius) + 2px);
+  gap: 4px;
+  padding: 3px;
+  border-radius: calc(var(--control-border-radius) + 1px);
   background: rgba(70, 70, 70, 0.2);
 }
 
