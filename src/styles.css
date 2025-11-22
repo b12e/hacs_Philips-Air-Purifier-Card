@@ -1,6 +1,6 @@
 :host {
   /* Mushroom standard spacing and sizing */
-  --spacing: 12px;
+  --spacing: 8px;
   --icon-size: 40px;
   --icon-border-radius: 50%;
   --control-height: 40px;

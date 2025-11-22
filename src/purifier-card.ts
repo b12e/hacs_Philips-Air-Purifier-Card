@@ -432,7 +432,7 @@ export class PurifierCard extends LitElement {
     }
 
     // Show all visible modes as inline buttons
-    // If collapsible_preset_modes is enabled and modes are expanded, wrap them in a container
+    // Always wrap preset modes in a container to show grouping
     const modesHtml = visibleModes.map(
       (mode) => html`
         <button
@@ -447,17 +447,21 @@ export class PurifierCard extends LitElement {
       `,
     );
 
+    // Always wrap preset modes in container for grouping
     if (this.config.collapsible_preset_modes && this._showPresetModes) {
       return html`
         <div class="preset-modes-container">
           ${modesHtml}
-          ${this.renderChildLockInlineButton()}
         </div>
+        ${this.renderChildLockInlineButton()}
       `;
     }
 
+    // Even when not collapsible, wrap modes in container
     return html`
-      ${modesHtml}
+      <div class="preset-modes-container">
+        ${modesHtml}
+      </div>
       ${this.renderChildLockInlineButton()}
     `;
   }
