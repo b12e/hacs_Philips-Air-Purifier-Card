@@ -21,6 +21,7 @@ export class PurifierCardEditor extends LitElement {
   @state() private config!: Partial<PurifierCardConfig>;
 
   @state() private devices: any[] = [];
+  @state() private areas: any[] = [];
 
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
     this.config = config || {};
@@ -80,7 +81,21 @@ export class PurifierCardEditor extends LitElement {
     console.log('All devices:', allDevices.length);
     this.devices = filterPhilipsDevices(allDevices);
     console.log('Filtered Philips devices:', this.devices.length, this.devices);
+
+    // Load areas
+    try {
+      this.areas = await this.hass.callWS({ type: 'config/area_registry/list' });
+    } catch (error) {
+      console.error('Error fetching areas:', error);
+      this.areas = [];
+    }
+
     this.requestUpdate();
+  }
+
+  private getAreaName(areaId: string): string {
+    const area = this.areas.find((a) => a.area_id === areaId);
+    return area?.name || 'Unknown';
   }
 
   protected render(): Template {
@@ -95,7 +110,7 @@ export class PurifierCardEditor extends LitElement {
             .label=${localize('editor.device')}
             @selected=${this.deviceChanged}
             @change=${this.deviceChanged}
-            .value=${this.config.device_id}
+            .value=${this.config?.device_id || ''}
             @closed=${(e: PointerEvent) => e.stopPropagation()}
             fixedMenuPosition
             naturalMenuWidth
@@ -105,7 +120,12 @@ export class PurifierCardEditor extends LitElement {
               : this.devices.map(
                   (device) =>
                     html`<mwc-list-item .value=${device.id}>
-                      ${device.name_by_user || device.name}
+                      <span style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-weight: 500;">${device.name_by_user || device.name}</span>
+                        <span style="font-size: 0.85em; opacity: 0.7;">
+                          ${device.model}${device.area_id ? ` • ${this.getAreaName(device.area_id)}` : ''}
+                        </span>
+                      </span>
                     </mwc-list-item>`,
                 )}
           </ha-select>
