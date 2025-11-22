@@ -49,6 +49,8 @@ export interface PurifierCardConfig {
   // Display options
   show_name: boolean;
   show_state: boolean;
+  show_icon: boolean; // Show/hide the power button/icon
+  icon_animation?: boolean; // Animate the fan icon when on
   fill_container?: boolean;
 
   // Preset modes
@@ -63,6 +65,7 @@ export interface PurifierCardConfig {
 
   // Controls
   show_child_lock?: boolean;
+  collapse_controls_when_off?: boolean; // Hide sensors and buttons when device is off
 
   // Legacy
   show_toolbar: boolean; // Deprecated

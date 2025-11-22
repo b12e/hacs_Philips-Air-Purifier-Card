@@ -39,6 +39,7 @@ export class PurifierCardEditor extends LitElement {
       sensors_in_separate_card: config?.sensors_in_separate_card ?? true,
       collapsible_preset_modes: config?.collapsible_preset_modes ?? false,
       fill_container: config?.fill_container ?? false,
+      collapse_controls_when_off: config?.collapse_controls_when_off ?? false,
     };
 
     // Load devices
@@ -126,6 +127,77 @@ export class PurifierCardEditor extends LitElement {
     return area?.name || 'Unknown';
   }
 
+  private renderSensorCheckboxes(): Template {
+    const detectedEntities = this.config?.detected_entities;
+    if (!detectedEntities) return nothing;
+
+    const availableSensors: Array<{key: string, label: string}> = [];
+    if (detectedEntities.pm25) availableSensors.push({ key: 'pm25', label: 'PM2.5' });
+    if (detectedEntities.allergen_index) availableSensors.push({ key: 'iai', label: 'IAI' });
+    if (detectedEntities.humidity) availableSensors.push({ key: 'humidity', label: 'Humidity' });
+    if (detectedEntities.temperature) availableSensors.push({ key: 'temperature', label: 'Temperature' });
+
+    if (availableSensors.length === 0) return nothing;
+
+    const visibleSensors = this.config?.visible_sensors || [];
+
+    return html`
+      <div class="sensor-checkboxes">
+        <div style="margin-left: 16px; margin-bottom: 8px; font-size: 12px; opacity: 0.7;">
+          Visible Sensors (empty = all):
+        </div>
+        ${availableSensors.map(sensor => html`
+          <div class="option" style="margin-left: 32px;">
+            <ha-switch
+              .checked=${visibleSensors.length === 0 || visibleSensors.includes(sensor.key)}
+              @change=${(e: Event) => this.sensorVisibilityChanged(e, sensor.key)}
+            >
+            </ha-switch>
+            ${sensor.label}
+          </div>
+        `)}
+      </div>
+    `;
+  }
+
+  private sensorVisibilityChanged(event: Event, sensorKey: string): void {
+    if (!this.config || !this.hass || !event.target) {
+      return;
+    }
+
+    const target = event.target as HTMLInputElement;
+    const isChecked = target.checked;
+    let visibleSensors = [...(this.config.visible_sensors || [])];
+
+    if (isChecked) {
+      // If checking, remove from list (empty list = all visible)
+      visibleSensors = visibleSensors.filter(k => k !== sensorKey);
+    } else {
+      // If unchecking, we need to build explicit list
+      const detectedEntities = this.config.detected_entities;
+      if (detectedEntities) {
+        // If list was empty (all visible), populate with all except this one
+        if (visibleSensors.length === 0) {
+          if (detectedEntities.pm25) visibleSensors.push('pm25');
+          if (detectedEntities.allergen_index) visibleSensors.push('iai');
+          if (detectedEntities.humidity) visibleSensors.push('humidity');
+          if (detectedEntities.temperature) visibleSensors.push('temperature');
+          visibleSensors = visibleSensors.filter(k => k !== sensorKey);
+        } else {
+          // Just remove from existing list
+          visibleSensors = visibleSensors.filter(k => k !== sensorKey);
+        }
+      }
+    }
+
+    this.config = {
+      ...this.config,
+      visible_sensors: visibleSensors,
+    };
+
+    fireEvent(this, 'config-changed', { config: this.config });
+  }
+
   protected render(): Template {
     if (!this.hass || !this.config) {
       return nothing;
@@ -202,6 +274,26 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
+            .checked=${this.config?.show_icon ?? true}
+            .configValue=${'show_icon'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Show Icon
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config?.icon_animation ?? true}
+            .configValue=${'icon_animation'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Animate Icon
+        </div>
+
+        <div class="option">
+          <ha-switch
             aria-label=${localize(
               this.config?.show_preset_modes
                 ? 'editor.show_preset_modes_aria_label_off'
@@ -229,6 +321,10 @@ export class PurifierCardEditor extends LitElement {
           </ha-switch>
           ${localize('editor.show_sensors')}
         </div>
+
+        ${this.config?.show_sensors && this.config?.detected_entities
+          ? this.renderSensorCheckboxes()
+          : nothing}
 
         <div class="option">
           <ha-switch
@@ -268,6 +364,16 @@ export class PurifierCardEditor extends LitElement {
           >
           </ha-switch>
           Fill Container
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config?.collapse_controls_when_off ?? false}
+            .configValue=${'collapse_controls_when_off'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Collapse Controls When Off
         </div>
       </div>
     `;

@@ -274,6 +274,11 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
+    // Hide sensors if collapse_controls_when_off is enabled and device is off
+    if (this.config.collapse_controls_when_off && this.entity?.state !== 'on') {
+      return nothing;
+    }
+
     const sensors = this.getSensorData();
     if (sensors.length === 0) {
       return nothing;
@@ -292,6 +297,11 @@ export class PurifierCard extends LitElement {
 
   private renderSeparateSensorCards(): Template {
     if (!this.config.show_sensors || !this.config.sensors_in_separate_card || !this.detectedEntities) {
+      return nothing;
+    }
+
+    // Hide sensors if collapse_controls_when_off is enabled and device is off
+    if (this.config.collapse_controls_when_off && this.entity?.state !== 'on') {
       return nothing;
     }
 
@@ -346,17 +356,24 @@ export class PurifierCard extends LitElement {
     const isOn = state === 'on';
 
     // Determine if we should show preset mode buttons inline
-    const shouldShowInlineControls = isOn && (
+    const shouldShowInlineControls = (
       this.config.show_preset_modes ||
       this.config.show_child_lock
-    );
+    ) && (!this.config.collapse_controls_when_off || isOn);
 
     return html`
       <div class="card-header">
-        <div class="icon-state ${classMap({ active: isOn })}" @click=${() => this.handleToggle()}>
-          <ha-icon icon="mdi:fan"></ha-icon>
-        </div>
-        <div class="info-content">
+        ${this.config.show_icon
+          ? html`
+              <div class="icon-state ${classMap({
+                active: isOn,
+                spin: isOn && (this.config.icon_animation ?? true)
+              })}" @click=${() => this.handleToggle()}>
+                <ha-icon icon="mdi:fan"></ha-icon>
+              </div>
+            `
+          : nothing}
+        <div class="info-content" @click=${() => this.handleToggle()}>
           ${this.config.show_name ? html`<div class="name">${name}</div>` : nothing}
           ${this.config.show_state
             ? html`<div class="state-text">${stateText}</div>`
@@ -407,20 +424,32 @@ export class PurifierCard extends LitElement {
     }
 
     // Show all visible modes as inline buttons
+    // If collapsible_preset_modes is enabled and modes are expanded, wrap them in a container
+    const modesHtml = visibleModes.map(
+      (mode) => html`
+        <button
+          class="control-button ${classMap({
+            active: mode === preset_mode,
+          })}"
+          @click=${() => this.handlePresetMode(mode)}
+          title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
+        >
+          <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
+        </button>
+      `,
+    );
+
+    if (this.config.collapsible_preset_modes && this._showPresetModes) {
+      return html`
+        <div class="preset-modes-container">
+          ${modesHtml}
+          ${this.renderChildLockInlineButton()}
+        </div>
+      `;
+    }
+
     return html`
-      ${visibleModes.map(
-        (mode) => html`
-          <button
-            class="control-button ${classMap({
-              active: mode === preset_mode,
-            })}"
-            @click=${() => this.handlePresetMode(mode)}
-            title="${localize(`preset_mode.${mode.toLowerCase()}`) || mode}"
-          >
-            <ha-icon icon="pap:${this.getPresetIcon(mode)}"></ha-icon>
-          </button>
-        `,
-      )}
+      ${modesHtml}
       ${this.renderChildLockInlineButton()}
     `;
   }

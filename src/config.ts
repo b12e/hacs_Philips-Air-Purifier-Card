@@ -21,6 +21,8 @@ export default function buildConfig(
     // Display options
     show_name: config.show_name ?? true,
     show_state: config.show_state ?? true,
+    show_icon: config.show_icon ?? true,
+    icon_animation: config.icon_animation ?? true,
     fill_container: config.fill_container ?? false,
 
     // Preset modes
@@ -35,6 +37,7 @@ export default function buildConfig(
 
     // Controls
     show_child_lock: config.show_child_lock ?? true,
+    collapse_controls_when_off: config.collapse_controls_when_off ?? false,
 
     // Legacy (for backward compatibility)
     show_toolbar: config.show_toolbar ?? true,

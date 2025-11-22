@@ -1,11 +1,11 @@
 :host {
   /* Mushroom standard spacing and sizing */
-  --spacing: 12px;
-  --icon-size: 42px;
+  --spacing: 10px;
+  --icon-size: 40px;
   --icon-border-radius: 50%;
-  --control-height: 42px;
+  --control-height: 40px;
   --control-border-radius: 12px;
-  --control-spacing: 8px;
+  --control-spacing: 6px;
   --control-button-ratio: 1;
 
   /* Mushroom-inspired RGB color variables */
@@ -88,6 +88,19 @@ ha-card.fill-container {
   color: rgb(var(--rgb-state-fan));
 }
 
+.icon-state.active.spin ha-icon {
+  animation: 1s linear infinite spin;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .icon-state ha-icon {
   --mdc-icon-size: 20px;
 }
@@ -97,7 +110,8 @@ ha-card.fill-container {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0px;
+  cursor: pointer;
 }
 
 .name {
@@ -165,6 +179,28 @@ ha-card.fill-container {
   color: rgb(var(--rgb-state-fan));
 }
 
+/* Preset Modes Container - When Expanded */
+.preset-modes-container {
+  display: flex;
+  align-items: center;
+  gap: var(--control-spacing);
+  padding: 4px;
+  border-radius: calc(var(--control-border-radius) + 2px);
+  background: rgba(var(--rgb-primary-text-color), 0.05);
+}
+
+.preset-modes-container .control-button {
+  background-color: transparent;
+}
+
+.preset-modes-container .control-button:hover:not(.active) {
+  background: rgba(var(--rgb-primary-text-color), 0.15);
+}
+
+.preset-modes-container .control-button.active {
+  background-color: rgba(var(--rgb-state-fan), 0.2);
+}
+
 /* Modes Container - Mushroom Climate Style */
 .modes-container {
   display: flex;
@@ -227,12 +263,18 @@ ha-card.fill-container {
 
 /* Sensor Cards - Horizontal Layout */
 .sensor-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: var(--control-spacing);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .sensor-card {
+  flex: 0 0 auto;
+  min-width: 140px;
   cursor: pointer;
   transition: transform 180ms ease-in-out;
 }
