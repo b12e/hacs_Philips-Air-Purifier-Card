@@ -24,7 +24,22 @@ export class PurifierCardEditor extends LitElement {
   @state() private areas: any[] = [];
 
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
-    this.config = config || {};
+    // Ensure config is always initialized with defaults
+    this.config = {
+      ...config,
+      type: config?.type || 'custom:philips-purifier-card',
+      show_name: config?.show_name ?? true,
+      show_state: config?.show_state ?? true,
+      show_preset_modes: config?.show_preset_modes ?? true,
+      show_sensors: config?.show_sensors ?? true,
+      show_toolbar: config?.show_toolbar ?? true,
+      compact_view: config?.compact_view ?? false,
+      layout: config?.layout || 'vertical',
+      show_child_lock: config?.show_child_lock ?? true,
+      sensors_in_separate_card: config?.sensors_in_separate_card ?? true,
+      collapsible_preset_modes: config?.collapsible_preset_modes ?? false,
+      fill_container: config?.fill_container ?? false,
+    };
 
     // Load devices
     if (this.hass) {
@@ -143,12 +158,12 @@ export class PurifierCardEditor extends LitElement {
           </ha-select>
         </div>
 
-        ${this.config.detected_entities?.fan
+        ${this.config?.detected_entities?.fan
           ? html`
               <div class="detected-info">
                 <ha-alert alert-type="info">
                   ${localize('editor.detected_entities')}:
-                  ${Object.keys(this.config.detected_entities).length}
+                  ${Object.keys(this.config?.detected_entities ?? {}).length}
                 </ha-alert>
               </div>
             `
@@ -159,7 +174,7 @@ export class PurifierCardEditor extends LitElement {
             .label=${localize('editor.layout')}
             @selected=${this.valueChanged}
             .configValue=${'layout'}
-            .value=${this.config.layout || 'vertical'}
+            .value=${this.config?.layout || 'vertical'}
             @closed=${(e: PointerEvent) => e.stopPropagation()}
             fixedMenuPosition
             naturalMenuWidth
@@ -172,11 +187,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.config.show_name
+              this.config?.show_name
                 ? 'editor.show_name_aria_label_off'
                 : 'editor.show_name_aria_label_on',
             )}
-            .checked=${this.config.show_name ?? true}
+            .checked=${this.config?.show_name ?? true}
             .configValue=${'show_name'}
             @change=${this.valueChanged}
           >
@@ -187,11 +202,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.config.show_state
+              this.config?.show_state
                 ? 'editor.show_state_aria_label_off'
                 : 'editor.show_state_aria_label_on',
             )}
-            .checked=${this.config.show_state ?? true}
+            .checked=${this.config?.show_state ?? true}
             .configValue=${'show_state'}
             @change=${this.valueChanged}
           >
@@ -202,11 +217,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.config.show_preset_modes
+              this.config?.show_preset_modes
                 ? 'editor.show_preset_modes_aria_label_off'
                 : 'editor.show_preset_modes_aria_label_on',
             )}
-            .checked=${this.config.show_preset_modes ?? true}
+            .checked=${this.config?.show_preset_modes ?? true}
             .configValue=${'show_preset_modes'}
             @change=${this.valueChanged}
           >
@@ -217,11 +232,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.config.show_sensors
+              this.config?.show_sensors
                 ? 'editor.show_sensors_aria_label_off'
                 : 'editor.show_sensors_aria_label_on',
             )}
-            .checked=${this.config.show_sensors ?? true}
+            .checked=${this.config?.show_sensors ?? true}
             .configValue=${'show_sensors'}
             @change=${this.valueChanged}
           >
@@ -231,7 +246,7 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            .checked=${this.config.show_child_lock ?? true}
+            .checked=${this.config?.show_child_lock ?? true}
             .configValue=${'show_child_lock'}
             @change=${this.valueChanged}
           >
@@ -241,7 +256,7 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            .checked=${this.config.sensors_in_separate_card ?? true}
+            .checked=${this.config?.sensors_in_separate_card ?? true}
             .configValue=${'sensors_in_separate_card'}
             @change=${this.valueChanged}
           >
@@ -251,7 +266,7 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            .checked=${this.config.collapsible_preset_modes ?? false}
+            .checked=${this.config?.collapsible_preset_modes ?? false}
             .configValue=${'collapsible_preset_modes'}
             @change=${this.valueChanged}
           >
@@ -261,7 +276,7 @@ export class PurifierCardEditor extends LitElement {
 
         <div class="option">
           <ha-switch
-            .checked=${this.config.fill_container ?? false}
+            .checked=${this.config?.fill_container ?? false}
             .configValue=${'fill_container'}
             @change=${this.valueChanged}
           >
