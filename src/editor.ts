@@ -8,7 +8,7 @@ import {
 import { PurifierCardConfig, Template } from './types';
 import localize from './localize';
 import styles from './editor.css';
-import { getDevices, filterPhilipsDevices, detectPhilipsEntities } from './utils';
+import { detectPhilipsEntities } from './utils';
 
 type ConfigElement = HTMLInputElement & {
   configValue?: keyof PurifierCardConfig;
@@ -19,9 +19,6 @@ export class PurifierCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private config!: Partial<PurifierCardConfig>;
-
-  @state() private devices: any[] = [];
-  @state() private areas: any[] = [];
 
   @state() private expandedSections: Set<string> = new Set(['display']);
 
@@ -44,11 +41,6 @@ export class PurifierCardEditor extends LitElement {
       collapse_controls_when_off: config?.collapse_controls_when_off ?? false,
       hide_sensors_when_off: config?.hide_sensors_when_off ?? false,
     };
-
-    // Load devices
-    if (this.hass) {
-      await this.loadDevices();
-    }
 
     // Auto-detect entities if device_id is set
     if (this.config?.device_id && this.hass) {
@@ -89,45 +81,15 @@ export class PurifierCardEditor extends LitElement {
   protected async updated(changedProps: Map<string, any>) {
     super.updated(changedProps);
 
-    // Load devices when hass becomes available or when editor is opened
-    if (changedProps.has('hass') && this.hass) {
-      if (this.devices.length === 0) {
-        await this.loadDevices();
-      }
-
-      // If we have a device_id in config but no detected entities, run detection
-      if (this.config?.device_id && !this.config?.detected_entities?.fan) {
-        const detected = await detectPhilipsEntities(this.hass, this.config.device_id);
-        this.config = {
-          ...this.config,
-          detected_entities: detected,
-          entity: detected.fan,
-        };
-      }
+    // If we have a device_id in config but no detected entities, run detection
+    if (changedProps.has('hass') && this.hass && this.config?.device_id && !this.config?.detected_entities?.fan) {
+      const detected = await detectPhilipsEntities(this.hass, this.config.device_id);
+      this.config = {
+        ...this.config,
+        detected_entities: detected,
+        entity: detected.fan,
+      };
     }
-  }
-
-  private async loadDevices() {
-    if (!this.hass) return;
-
-    const allDevices = await getDevices(this.hass);
-    this.devices = filterPhilipsDevices(allDevices);
-
-    // Load areas
-    try {
-      this.areas = await this.hass.callWS({ type: 'config/area_registry/list' });
-    } catch (error) {
-      console.error('Error fetching areas:', error);
-      this.areas = [];
-    }
-
-    // Request update to refresh the device dropdown with loaded devices
-    this.requestUpdate();
-  }
-
-  private getAreaName(areaId: string): string {
-    const area = this.areas.find((a) => a.area_id === areaId);
-    return area?.name || 'Unknown';
   }
 
   private toggleSection(sectionId: string): void {
@@ -353,32 +315,34 @@ export class PurifierCardEditor extends LitElement {
       <div class="card-config">
         <!-- Device Selector -->
         <div class="option">
-          <ha-select
+          <ha-selector-device
+            .hass=${this.hass}
+            .value=${this.config?.device_id}
             .label=${localize('editor.device')}
-            @selected=${this.deviceChanged}
-            @change=${this.deviceChanged}
-            .value=${this.config?.device_id || ''}
-            @closed=${(e: PointerEvent) => e.stopPropagation()}
-            fixedMenuPosition
-            naturalMenuWidth
-          >
-            ${this.devices.length === 0
-              ? html`<mwc-list-item value="">Loading devices...</mwc-list-item>`
-              : this.devices.map(
-                  (device) => {
-                    const deviceName = device.name_by_user || device.name;
-                    const areaName = device.area_id ? this.getAreaName(device.area_id) : '';
-                    const displayText = areaName ? `${deviceName} (${areaName})` : deviceName;
-
-                    return html`<mwc-list-item
-                      .value=${device.id}
-                      .selected=${device.id === this.config?.device_id}
-                    >
-                      ${displayText}
-                    </mwc-list-item>`;
-                  }
-                )}
-          </ha-select>
+            .deviceFilter=${(device: any) => {
+              const manufacturer = device.manufacturer?.toLowerCase() || '';
+              const model = device.model?.toUpperCase() || '';
+              const isPhilips = manufacturer.includes('philips');
+              // Check if it's one of our supported models
+              const modelBase = model.replace(/\/\d+$/, '');
+              const supportedModels = ['AC0850', 'AC0950', 'AC0951', 'AC1214', 'AC1715',
+                'AC2729', 'AC2889', 'AC2936', 'AC2939', 'AC2958', 'AC2959',
+                'AC3033', 'AC3036', 'AC3039', 'AC3055', 'AC3059',
+                'AC3210', 'AC3220', 'AC3221', 'AC3259',
+                'AC3420', 'AC3421', 'AC3737', 'AC3829', 'AC3836',
+                'AC3854', 'AC3858',
+                'AC4220', 'AC4221', 'AC4236', 'AC4550', 'AC4558',
+                'AC5659', 'AC5660',
+                'AMF765', 'AMF870',
+                'CX3120', 'CX3550', 'CX5120',
+                'HU1509', 'HU1510', 'HU5710'];
+              const isSupportedModel = supportedModels.some(sm =>
+                model.startsWith(sm) || modelBase === sm
+              );
+              return isPhilips && isSupportedModel;
+            }}
+            @value-changed=${this.deviceChangedFromSelector}
+          ></ha-selector-device>
         </div>
 
         <!-- Display Section -->
@@ -618,13 +582,12 @@ export class PurifierCardEditor extends LitElement {
     `;
   }
 
-  private async deviceChanged(event: Event): Promise<void> {
-    if (!this.hass || !event.target) {
+  private async deviceChangedFromSelector(event: CustomEvent): Promise<void> {
+    if (!this.hass) {
       return;
     }
 
-    const target = event.target as any;
-    const deviceId = target.value;
+    const deviceId = event.detail.value;
 
     if (!deviceId) {
       return;
