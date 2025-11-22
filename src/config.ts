@@ -24,6 +24,8 @@ export default function buildConfig(
     show_toolbar: config.show_toolbar ?? true,
     compact_view: config.compact_view ?? false,
     layout: config.layout ?? 'vertical',
+    collapsible_controls: config.collapsible_controls ?? false,
+    fill_container: config.fill_container ?? false,
     detected_entities: config.detected_entities ?? {},
   };
 }

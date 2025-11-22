@@ -21,12 +21,6 @@ export class PurifierCardEditor extends LitElement {
   @state() private config!: Partial<PurifierCardConfig>;
 
   @state() private devices: any[] = [];
-  @state() private compact_view = false;
-  @state() private show_name = true;
-  @state() private show_state = true;
-  @state() private show_preset_modes = true;
-  @state() private show_sensors = true;
-  @state() private show_toolbar = true;
 
   public async setConfig(config: LovelaceCardConfig & PurifierCardConfig) {
     this.config = config;
@@ -70,14 +64,13 @@ export class PurifierCardEditor extends LitElement {
         };
       }
     }
+  }
 
-    // Initialize state
-    this.compact_view = this.config.compact_view ?? false;
-    this.show_name = this.config.show_name ?? true;
-    this.show_state = this.config.show_state ?? true;
-    this.show_preset_modes = this.config.show_preset_modes ?? true;
-    this.show_sensors = this.config.show_sensors ?? true;
-    this.show_toolbar = this.config.show_toolbar ?? true;
+  protected async updated(changedProps: Map<string, any>) {
+    super.updated(changedProps);
+    if (changedProps.has('hass') && this.hass && this.devices.length === 0) {
+      await this.loadDevices();
+    }
   }
 
   private async loadDevices() {
@@ -141,11 +134,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.compact_view
+              this.config.compact_view
                 ? 'editor.compact_view_aria_label_off'
                 : 'editor.compact_view_aria_label_on',
             )}
-            .checked=${this.compact_view}
+            .checked=${this.config.compact_view ?? false}
             .configValue=${'compact_view'}
             @change=${this.valueChanged}
           >
@@ -156,11 +149,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.show_name
+              this.config.show_name
                 ? 'editor.show_name_aria_label_off'
                 : 'editor.show_name_aria_label_on',
             )}
-            .checked=${this.show_name}
+            .checked=${this.config.show_name ?? true}
             .configValue=${'show_name'}
             @change=${this.valueChanged}
           >
@@ -171,11 +164,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.show_state
+              this.config.show_state
                 ? 'editor.show_state_aria_label_off'
                 : 'editor.show_state_aria_label_on',
             )}
-            .checked=${this.show_state}
+            .checked=${this.config.show_state ?? true}
             .configValue=${'show_state'}
             @change=${this.valueChanged}
           >
@@ -186,11 +179,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.show_preset_modes
+              this.config.show_preset_modes
                 ? 'editor.show_preset_modes_aria_label_off'
                 : 'editor.show_preset_modes_aria_label_on',
             )}
-            .checked=${this.show_preset_modes}
+            .checked=${this.config.show_preset_modes ?? true}
             .configValue=${'show_preset_modes'}
             @change=${this.valueChanged}
           >
@@ -201,11 +194,11 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.show_sensors
+              this.config.show_sensors
                 ? 'editor.show_sensors_aria_label_off'
                 : 'editor.show_sensors_aria_label_on',
             )}
-            .checked=${this.show_sensors}
+            .checked=${this.config.show_sensors ?? true}
             .configValue=${'show_sensors'}
             @change=${this.valueChanged}
           >
@@ -216,16 +209,36 @@ export class PurifierCardEditor extends LitElement {
         <div class="option">
           <ha-switch
             aria-label=${localize(
-              this.show_toolbar
+              this.config.show_toolbar
                 ? 'editor.show_toolbar_aria_label_off'
                 : 'editor.show_toolbar_aria_label_on',
             )}
-            .checked=${this.show_toolbar}
+            .checked=${this.config.show_toolbar ?? true}
             .configValue=${'show_toolbar'}
             @change=${this.valueChanged}
           >
           </ha-switch>
           ${localize('editor.show_toolbar')}
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config.collapsible_controls ?? false}
+            .configValue=${'collapsible_controls'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Collapsible Controls (Hide when off)
+        </div>
+
+        <div class="option">
+          <ha-switch
+            .checked=${this.config.fill_container ?? false}
+            .configValue=${'fill_container'}
+            @change=${this.valueChanged}
+          >
+          </ha-switch>
+          Fill Container
         </div>
       </div>
     `;

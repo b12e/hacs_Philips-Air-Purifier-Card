@@ -1,15 +1,25 @@
 :host {
+  /* Mushroom standard spacing and sizing */
   --spacing: 12px;
-  --icon-size: 42px;
+  --icon-size: 36px;
+  --icon-border-radius: 50%;
   --control-height: 42px;
-  --control-spacing: 12px;
   --control-border-radius: 12px;
+  --control-spacing: 12px;
+  --control-button-ratio: 1;
+  --control-icon-size: 20px;
 
   /* Mushroom-inspired RGB color variables */
   --rgb-state-fan: var(--rgb-cyan, 0, 188, 212);
   --rgb-primary-color: var(--rgb-accent-color, 3, 169, 244);
   --rgb-disabled: 189, 189, 189;
   --rgb-primary-text-color: var(--primary-text-color-rgb, 33, 33, 33);
+
+  /* Typography */
+  --card-primary-font-size: 14px;
+  --card-primary-font-weight: 500;
+  --card-secondary-font-size: 12px;
+  --card-secondary-font-weight: 400;
 
   /* Legacy color variables for backward compatibility */
   --primary-color: rgb(var(--rgb-state-fan));
@@ -38,6 +48,10 @@ ha-card.mushroom-card {
 
 ha-card.compact {
   padding: 8px;
+}
+
+ha-card.fill-container {
+  height: 100%;
 }
 
 .card-content {
@@ -105,8 +119,8 @@ ha-card.compact {
 }
 
 .name {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: var(--card-primary-font-size);
+  font-weight: var(--card-primary-font-weight);
   color: var(--primary-text);
   white-space: nowrap;
   overflow: hidden;
@@ -114,7 +128,8 @@ ha-card.compact {
 }
 
 .state-text {
-  font-size: 14px;
+  font-size: var(--card-secondary-font-size);
+  font-weight: var(--card-secondary-font-weight);
   color: var(--secondary-text);
   white-space: nowrap;
   overflow: hidden;
@@ -127,9 +142,10 @@ ha-card.compact {
   gap: 4px;
 }
 
-/* Preset Modes - Mushroom Button Style */
+/* Preset Modes - Mushroom Button Group Style */
 .preset-modes {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: var(--control-spacing);
   padding: 4px 0;
@@ -141,37 +157,41 @@ ha-card.compact {
   justify-content: center;
   flex-direction: column;
   gap: 4px;
+  flex-basis: calc(var(--control-height) * var(--control-button-ratio));
+  flex-grow: 0;
+  flex-shrink: 1;
   height: var(--control-height);
-  min-width: var(--control-height);
+  min-width: calc(var(--control-height) * var(--control-button-ratio));
   padding: 0 12px;
-  border-radius: var(--control-border-radius, 12px);
-  background: rgba(var(--rgb-disabled, 127, 127, 127), 0.2);
+  border-radius: var(--control-border-radius);
+  background: rgba(var(--rgb-primary-text-color), 0.05);
   border: none;
   color: var(--primary-text);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--card-secondary-font-size);
+  font-weight: var(--card-primary-font-weight);
   cursor: pointer;
-  transition: background-color 280ms ease-in-out;
+  transition: background-color 280ms ease-in-out, color 280ms ease-in-out;
   box-sizing: border-box;
-  line-height: 0;
+  line-height: 1;
 }
 
-.preset-mode-button:hover {
-  background: rgba(var(--rgb-primary-text-color, 127, 127, 127), 0.1);
+.preset-mode-button:hover:not(.active) {
+  background: rgba(var(--rgb-primary-text-color), 0.1);
 }
 
 .preset-mode-button.active {
-  background: rgba(var(--rgb-state-fan, var(--rgb-primary-color, 3, 169, 244)), 0.2);
-  color: rgb(var(--rgb-state-fan, var(--rgb-primary-color, 3, 169, 244)));
+  background: rgba(var(--rgb-state-fan), 0.2);
+  color: rgb(var(--rgb-state-fan));
 }
 
 .preset-mode-button ha-icon {
-  --mdc-icon-size: 20px;
+  --mdc-icon-size: var(--control-icon-size);
   line-height: 0;
 }
 
 .preset-mode-button span {
-  line-height: normal;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 /* Sensors */

@@ -52,6 +52,8 @@ export interface PurifierCardConfig {
   show_toolbar: boolean;
   compact_view: boolean;
   layout: 'vertical' | 'horizontal';
+  collapsible_controls?: boolean; // Hide controls when device is off
+  fill_container?: boolean; // Fill available space in layout
   detected_entities?: DetectedEntities;
 }
 

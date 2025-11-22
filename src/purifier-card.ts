@@ -169,6 +169,11 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
+    // Hide controls if collapsible_controls is enabled and device is off
+    if (this.config.collapsible_controls && this.entity.state === 'off') {
+      return nothing;
+    }
+
     const {
       attributes: { preset_mode, preset_modes, supported_features = 0 },
     } = this.entity;
@@ -216,6 +221,11 @@ export class PurifierCard extends LitElement {
 
   private renderSensors(): Template {
     if (!this.config.show_sensors || !this.detectedEntities) {
+      return nothing;
+    }
+
+    // Hide sensors if collapsible_controls is enabled and device is off
+    if (this.config.collapsible_controls && this.entity?.state === 'off') {
       return nothing;
     }
 
@@ -340,6 +350,11 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
+    // Hide toolbar if collapsible_controls is enabled and device is off
+    if (this.config.collapsible_controls && this.entity.state === 'off') {
+      return nothing;
+    }
+
     const { state } = this.entity;
     const isOn = state === 'on';
 
@@ -398,6 +413,7 @@ export class PurifierCard extends LitElement {
       <ha-card class="mushroom-card ${classMap({
         compact: this.config.compact_view,
         horizontal: this.config.layout === 'horizontal',
+        'fill-container': this.config.fill_container ?? false,
       })}">
         <div class="card-content">
           ${this.renderHeader()}
