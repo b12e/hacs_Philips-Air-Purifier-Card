@@ -63,7 +63,7 @@
     "show_sensors_aria_label_off": "Toggle display sensors off",
     "visible_sensors": "Visible Sensors",
     "sensors_in_separate_card": "Show Sensors in Separate Cards",
-    "hide_sensors_when_off": "Hide Sensors When Off",
+    "show_sensors_when_off": "Show Sensors When Off",
     "show_child_lock": "Show Child Lock Button",
     "collapse_controls_when_off": "Show Controls When Off",
     "show_toolbar": "Show Toolbar",

@@ -539,12 +539,20 @@ export class PurifierCardEditor extends LitElement {
 
                   <div class="option">
                     <ha-switch
-                      .checked=${this.config?.hide_sensors_when_off ?? false}
+                      .checked=${!(this.config?.hide_sensors_when_off ?? false)}
                       .configValue=${'hide_sensors_when_off'}
-                      @change=${this.valueChanged}
+                      @change=${(e: Event) => {
+                        // Invert the value since the label is "Show Sensors When Off"
+                        const target = e.target as HTMLInputElement;
+                        this.config = {
+                          ...this.config,
+                          hide_sensors_when_off: !target.checked,
+                        };
+                        fireEvent(this, 'config-changed', { config: this.config });
+                      }}
                     >
                     </ha-switch>
-                    ${localize('editor.hide_sensors_when_off')}
+                    ${localize('editor.show_sensors_when_off')}
                   </div>
                 `
               : nothing}
