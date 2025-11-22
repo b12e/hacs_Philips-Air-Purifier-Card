@@ -366,7 +366,10 @@ export class PurifierCardEditor extends LitElement {
               ? html`<mwc-list-item value="">Loading devices...</mwc-list-item>`
               : this.devices.map(
                   (device) =>
-                    html`<mwc-list-item .value=${device.id}>
+                    html`<mwc-list-item
+                      .value=${device.id}
+                      .selected=${device.id === this.config?.device_id}
+                    >
                       <span style="display: flex; flex-direction: column; gap: 2px;">
                         <span style="font-weight: 500;">${device.name_by_user || device.name}</span>
                         <span style="font-size: 0.85em; opacity: 0.7;">
