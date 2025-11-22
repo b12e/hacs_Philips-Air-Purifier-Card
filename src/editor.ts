@@ -165,32 +165,154 @@ export class PurifierCardEditor extends LitElement {
 
     const target = event.target as HTMLInputElement;
     const isChecked = target.checked;
+    const detectedEntities = this.config.detected_entities;
+
+    if (!detectedEntities) {
+      return;
+    }
+
     let visibleSensors = [...(this.config.visible_sensors || [])];
 
+    // Get all available sensor keys
+    const allSensors: string[] = [];
+    if (detectedEntities.pm25) allSensors.push('pm25');
+    if (detectedEntities.allergen_index) allSensors.push('iai');
+    if (detectedEntities.humidity) allSensors.push('humidity');
+    if (detectedEntities.temperature) allSensors.push('temperature');
+
     if (isChecked) {
-      // If checking, remove from list (empty list = all visible)
-      visibleSensors = visibleSensors.filter(k => k !== sensorKey);
-    } else {
-      // If unchecking, we need to build explicit list
-      const detectedEntities = this.config.detected_entities;
-      if (detectedEntities) {
-        // If list was empty (all visible), populate with all except this one
-        if (visibleSensors.length === 0) {
-          if (detectedEntities.pm25) visibleSensors.push('pm25');
-          if (detectedEntities.allergen_index) visibleSensors.push('iai');
-          if (detectedEntities.humidity) visibleSensors.push('humidity');
-          if (detectedEntities.temperature) visibleSensors.push('temperature');
-          visibleSensors = visibleSensors.filter(k => k !== sensorKey);
-        } else {
-          // Just remove from existing list
-          visibleSensors = visibleSensors.filter(k => k !== sensorKey);
+      // Turning sensor ON (making it visible)
+      if (visibleSensors.length === 0) {
+        // If empty (all visible), stay empty - no change needed
+        // because empty means all are visible
+      } else {
+        // Add this sensor to the visible list if not already there
+        if (!visibleSensors.includes(sensorKey)) {
+          visibleSensors.push(sensorKey);
         }
+        // If we now have all sensors, clear the list (empty = all visible)
+        if (visibleSensors.length === allSensors.length) {
+          visibleSensors = [];
+        }
+      }
+    } else {
+      // Turning sensor OFF (hiding it)
+      if (visibleSensors.length === 0) {
+        // If empty (all visible), create explicit list without this sensor
+        visibleSensors = allSensors.filter(k => k !== sensorKey);
+      } else {
+        // Remove this sensor from the visible list
+        visibleSensors = visibleSensors.filter(k => k !== sensorKey);
       }
     }
 
     this.config = {
       ...this.config,
       visible_sensors: visibleSensors,
+    };
+
+    fireEvent(this, 'config-changed', { config: this.config });
+  }
+
+  private renderPresetModeCheckboxes(): Template {
+    if (!this.config?.entity && !this.config?.detected_entities?.fan) {
+      return nothing;
+    }
+
+    const entityId = this.config.entity || this.config.detected_entities?.fan;
+    if (!entityId) return nothing;
+
+    const entityState = this.hass?.states[entityId];
+    if (!entityState) return nothing;
+
+    const presetModes = entityState.attributes.preset_modes as string[] | undefined;
+    if (!presetModes || presetModes.length === 0) return nothing;
+
+    // Define label mapping for preset modes
+    const presetModeLabels: Record<string, string> = {
+      auto: 'Auto',
+      sleep: 'Sleep',
+      turbo: 'Turbo',
+      speed_1: 'Speed 1',
+      speed_2: 'Speed 2',
+      speed_3: 'Speed 3',
+      allergen: 'Allergen',
+      bacteria: 'Bacteria',
+    };
+
+    const availableModes: Array<{key: string, label: string}> = presetModes.map(mode => ({
+      key: mode.toLowerCase(),
+      label: presetModeLabels[mode.toLowerCase()] || mode
+    }));
+
+    const visibleModes = this.config?.visible_preset_modes || [];
+
+    return html`
+      <div class="preset-mode-checkboxes" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px;">
+        ${availableModes.map(mode => html`
+          <div class="option" style="padding: 8px;">
+            <ha-switch
+              .checked=${visibleModes.length === 0 || visibleModes.includes(mode.key)}
+              @change=${(e: Event) => this.presetModeVisibilityChanged(e, mode.key)}
+            >
+            </ha-switch>
+            ${mode.label}
+          </div>
+        `)}
+      </div>
+    `;
+  }
+
+  private presetModeVisibilityChanged(event: Event, modeKey: string): void {
+    if (!this.config || !this.hass || !event.target) {
+      return;
+    }
+
+    const target = event.target as HTMLInputElement;
+    const isChecked = target.checked;
+
+    const entityId = this.config.entity || this.config.detected_entities?.fan;
+    if (!entityId) return;
+
+    const entityState = this.hass.states[entityId];
+    if (!entityState) return;
+
+    const presetModes = entityState.attributes.preset_modes as string[] | undefined;
+    if (!presetModes) return;
+
+    let visibleModes = [...(this.config.visible_preset_modes || [])];
+
+    // Get all available preset mode keys (lowercase)
+    const allModes: string[] = presetModes.map(m => m.toLowerCase());
+
+    if (isChecked) {
+      // Turning preset mode ON (making it visible)
+      if (visibleModes.length === 0) {
+        // If empty (all visible), stay empty - no change needed
+      } else {
+        // Add this mode to the visible list if not already there
+        if (!visibleModes.includes(modeKey)) {
+          visibleModes.push(modeKey);
+        }
+        // If we now have all modes, clear the list (empty = all visible)
+        if (visibleModes.length === allModes.length) {
+          visibleModes = [];
+        }
+      }
+    } else {
+      // Turning preset mode OFF (hiding it)
+      if (visibleModes.length === 0) {
+        // If empty (all visible), create explicit list without this mode
+        visibleModes = allModes.filter(k => k !== modeKey);
+      } else {
+        // Remove this mode from the visible list
+        visibleModes = visibleModes.filter(k => k !== modeKey);
+      }
+    }
+
+    this.config = {
+      ...this.config,
+      visible_preset_modes: visibleModes,
     };
 
     fireEvent(this, 'config-changed', { config: this.config });
@@ -304,6 +426,10 @@ export class PurifierCardEditor extends LitElement {
           </ha-switch>
           ${localize('editor.show_preset_modes')}
         </div>
+
+        ${this.config?.show_preset_modes && (this.config?.entity || this.config?.detected_entities?.fan)
+          ? this.renderPresetModeCheckboxes()
+          : nothing}
 
         <div class="option">
           <ha-switch

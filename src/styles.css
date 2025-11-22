@@ -1,11 +1,11 @@
 :host {
   /* Mushroom standard spacing and sizing */
-  --spacing: 10px;
+  --spacing: 12px;
   --icon-size: 40px;
   --icon-border-radius: 50%;
   --control-height: 40px;
   --control-border-radius: 12px;
-  --control-spacing: 6px;
+  --control-spacing: 12px;
   --control-button-ratio: 1;
 
   /* Mushroom-inspired RGB color variables */
@@ -57,8 +57,6 @@ ha-card.fill-container {
 .card-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
-  padding: var(--spacing);
   box-sizing: border-box;
 }
 
@@ -67,6 +65,7 @@ ha-card.fill-container {
   display: flex;
   align-items: center;
   gap: var(--spacing);
+  padding: var(--spacing);
 }
 
 .icon-state {
