@@ -1,11 +1,11 @@
 :host {
   /* Mushroom standard spacing and sizing */
   --spacing: 12px;
-  --icon-size: 36px;
+  --icon-size: 42px;
   --icon-border-radius: 50%;
   --control-height: 42px;
   --control-border-radius: 12px;
-  --control-spacing: 12px;
+  --control-spacing: 8px;
   --control-button-ratio: 1;
   --control-icon-size: 20px;
 
@@ -59,6 +59,7 @@ ha-card.fill-container {
   flex-direction: column;
   gap: var(--spacing);
   padding: var(--spacing);
+  box-sizing: border-box;
 }
 
 /* Header */
@@ -101,7 +102,7 @@ ha-card.fill-container {
 }
 
 .icon-state ha-icon {
-  --mdc-icon-size: 24px;
+  --mdc-icon-size: 20px;
 }
 
 .info-content {
@@ -142,7 +143,7 @@ ha-card.fill-container {
   flex-direction: row;
   justify-content: flex-end;
   gap: var(--control-spacing);
-  padding: 4px 0;
+  padding: 0;
 }
 
 .preset-mode-button {
@@ -184,24 +185,24 @@ ha-card.fill-container {
 /* Sensors */
 .sensors {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--spacing);
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--control-spacing);
 }
 
 .sensor {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(127, 127, 127, 0.05);
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--control-border-radius);
+  background: rgba(var(--rgb-primary-text-color), 0.05);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 280ms ease-in-out, transform 180ms ease-in-out;
 }
 
 .sensor:hover {
-  background: rgba(127, 127, 127, 0.1);
-  transform: translateY(-2px);
+  background: rgba(var(--rgb-primary-text-color), 0.1);
+  transform: translateY(-1px);
 }
 
 .sensor-icon {
@@ -212,12 +213,12 @@ ha-card.fill-container {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(var(--rgb-state-fan), 0.2);
+  background: rgba(var(--rgb-state-fan), 0.15);
   color: rgb(var(--rgb-state-fan));
 }
 
 .sensor-icon ha-icon {
-  --mdc-icon-size: 20px;
+  --mdc-icon-size: 18px;
 }
 
 .sensor-content {
@@ -237,8 +238,8 @@ ha-card.fill-container {
 }
 
 .sensor-value {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--primary-text);
   white-space: nowrap;
   overflow: hidden;
