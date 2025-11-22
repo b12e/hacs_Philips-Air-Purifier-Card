@@ -280,11 +280,6 @@ ha-card.fill-container {
   flex: 0 0 auto;
   min-width: 140px;
   cursor: pointer;
-  transition: transform 180ms ease-in-out;
-}
-
-.sensor-card:hover {
-  transform: translateY(-2px);
 }
 
 .sensor-card-content {

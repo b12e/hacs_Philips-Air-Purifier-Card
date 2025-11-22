@@ -66,6 +66,7 @@ export interface PurifierCardConfig {
   // Controls
   show_child_lock?: boolean;
   collapse_controls_when_off?: boolean; // Hide sensors and buttons when device is off
+  hide_sensors_when_off?: boolean; // Hide only sensors when device is off (requires collapse_controls_when_off)
 
   // Legacy
   show_toolbar: boolean; // Deprecated

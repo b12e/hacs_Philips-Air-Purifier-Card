@@ -40,6 +40,7 @@ export class PurifierCardEditor extends LitElement {
       collapsible_preset_modes: config?.collapsible_preset_modes ?? false,
       fill_container: config?.fill_container ?? false,
       collapse_controls_when_off: config?.collapse_controls_when_off ?? false,
+      hide_sensors_when_off: config?.hide_sensors_when_off ?? false,
     };
 
     // Load devices
@@ -372,6 +373,20 @@ export class PurifierCardEditor extends LitElement {
           </ha-switch>
           Collapse Controls When Off
         </div>
+
+        ${this.config?.collapse_controls_when_off
+          ? html`
+              <div class="option" style="margin-left: 32px;">
+                <ha-switch
+                  .checked=${this.config?.hide_sensors_when_off ?? false}
+                  .configValue=${'hide_sensors_when_off'}
+                  @change=${this.valueChanged}
+                >
+                </ha-switch>
+                Hide Sensors When Off
+              </div>
+            `
+          : nothing}
       </div>
     `;
   }

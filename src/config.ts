@@ -38,6 +38,7 @@ export default function buildConfig(
     // Controls
     show_child_lock: config.show_child_lock ?? true,
     collapse_controls_when_off: config.collapse_controls_when_off ?? false,
+    hide_sensors_when_off: config.hide_sensors_when_off ?? false,
 
     // Legacy (for backward compatibility)
     show_toolbar: config.show_toolbar ?? true,

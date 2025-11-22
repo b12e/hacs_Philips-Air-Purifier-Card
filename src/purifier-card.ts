@@ -274,8 +274,10 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
-    // Hide sensors if collapse_controls_when_off is enabled and device is off
-    if (this.config.collapse_controls_when_off && this.entity?.state !== 'on') {
+    // Hide sensors if hide_sensors_when_off is enabled and device is off
+    // OR if collapse_controls_when_off is enabled and device is off
+    if (this.entity?.state !== 'on' &&
+        (this.config.hide_sensors_when_off || this.config.collapse_controls_when_off)) {
       return nothing;
     }
 
@@ -300,8 +302,10 @@ export class PurifierCard extends LitElement {
       return nothing;
     }
 
-    // Hide sensors if collapse_controls_when_off is enabled and device is off
-    if (this.config.collapse_controls_when_off && this.entity?.state !== 'on') {
+    // Hide sensors if hide_sensors_when_off is enabled and device is off
+    // OR if collapse_controls_when_off is enabled and device is off
+    if (this.entity?.state !== 'on' &&
+        (this.config.hide_sensors_when_off || this.config.collapse_controls_when_off)) {
       return nothing;
     }
 
